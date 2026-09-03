@@ -117,11 +117,10 @@ built-in =favicon.svg= is used.
 
 ** Import DICOM Studies
 
-1. **Upload from the viewer** =http://server-ip:3000=.
+1. **Upload from the HTTP interface** =http://server-ip:8041=.
 2. **Send from an existing PACS / modality** — AE Title =PACS=, port =104=,
    IP =your-server-ip=.
-3. **Bulk import with the Python script** (the HTTP API is reachable on the
-   host at port =8041=):
+3. **Bulk import with the Python script**:
    #+begin_src bash
    python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir
    python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir admin admin.1234
