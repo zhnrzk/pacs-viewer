@@ -8,10 +8,10 @@ import base64
 
 if len(sys.argv) != 4 and len(sys.argv) != 6:
     print("""
-Sample script to recursively import in Orthanc all the DICOM files
-that are stored in some path. Please make sure that Orthanc is running
-before starting this script. The files are uploaded through the REST
-API.
+Sample script to recursively import in the DICOM server all the DICOM
+files that are stored in some path. Please make sure that the DICOM
+server is running before starting this script. The files are uploaded
+through the REST API.
 
 Usage: %s [hostname] [HTTP port] [path]
 Usage: %s [hostname] [HTTP port] [path] [username] [password]
@@ -24,7 +24,7 @@ URL = 'http://%s:%d/instances' % (sys.argv[1], int(sys.argv[2]))
 success = 0
 
 
-# This function will upload a single file to Orthanc through the REST API
+# This function will upload a single file to the DICOM server through the REST API
 def UploadFile(path):
     global success
 
@@ -63,7 +63,7 @@ def UploadFile(path):
             sys.stdout.write(" => failure (Is it a DICOM file?)\n")
 
     except:
-        sys.stdout.write(" => unable to connect (Is Orthanc running? Is there a password?)\n")
+        sys.stdout.write(" => unable to connect (Is the DICOM server running? Is there a password?)\n")
 
 
 if os.path.isfile(sys.argv[3]):

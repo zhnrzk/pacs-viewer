@@ -1,0 +1,16 @@
+# Generated config files (created by setup wizard from templates/)
+pacs-server.json
+nginx_viewer.conf
+viewer.js
+index.html
+manifest.json
+
+# Runtime data
+data/
+
+# Node modules
+setup/node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

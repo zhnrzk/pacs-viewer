@@ -1,38 +1,125 @@
+* PACS-viewer — Dockerized Medical Imaging Platform
 
-* Docker Compose File for OHIF with ORTHANC
+=PACS-viewer= bundles a web-based =DICOM viewer= (OHIF) with a lightweight
+=DICOM server= (Orthanc) into a single, deployable, hospital-branded stack.
 
-=Ohif=:  /(OHIF) Viewer/ is an open source, web-based, medical imaging platform.
+Built on two great open-source projects:
+[[https://github.com/OHIF/Viewers][OHIF Viewer]] and
+[[https://www.orthanc-server.com/][Orthanc]].
 
-=Orthanc=: Its free and open-source, lightweight DICOM server for medical imaging.
+** Prerequisites
 
-*** Create new docker network =pacs=
+You need =Docker=, the =Docker Compose= plugin, and =iproute2= (provides the
+=ss= command used by =start.sh=).
+
+*** Ubuntu / Debian
+
 #+begin_src bash
-docker network create pacs
+# Docker engine
+curl -fsSL https://get.docker.com | sh
+
+# Docker Compose plugin + iproute2
+sudo apt-get update
+sudo apt-get install docker-compose-plugin iproute2
+
+# Allow your user to run Docker without sudo
+sudo usermod -aG docker $USER
+newgrp docker
 #+end_src
 
-*** Clone This Repo
+*** Arch Linux
+
 #+begin_src bash
-git clone https://github.com/hyper4saken/ohif-orthanc.git
-cd ohif-orthanc
-docker-compose up -d
+sudo pacman -S docker docker-compose iproute2
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+newgrp docker
 #+end_src
 
-It will also create a new /bridge-network/ pacs.
+*** Verify
 
-*** Access OHIF and Orthanc
+#+begin_src bash
+docker compose version   # must respond (v2+)
+docker info              # daemon reachable
+ss -h                    # iproute2 present
+#+end_src
 
-[[./ohif-orthanc.jpg]]
+** Quick Start
 
-1. To access =OHIF= go to address `http://server-ip:3000`.
-2. To access =ORTHANC= webpage go to address `http://server-ip:8042`
+#+begin_src bash
+./start.sh
+#+end_src
 
-Default Username is =mapdr= & password is =changestrongpassword=
+This runs pre-flight checks, creates the =pacs= Docker network, and starts the
+setup wizard at =http://localhost:3001=.
 
+Open =http://localhost:3001=, fill in the configuration form, and click
+=Deploy=. The wizard generates all config files from =./templates/=, then
+=start.sh= starts the services on the host.
 
-*** Import DICOM Studies
-1. You can directly Import DICOM files or Folder from OHIF.
-2. You can directly send images from existing PACS/Machine
- - AE: MAPDR
- - PORT: 4242
- - IP: your-server-ip
-3. If you have file locally install httplib2 with pip =python ImportDicomFiles.py localhost 8042 /path/to/input/dir=
+- Viewer: =http://server-ip:3000=
+- DICOM admin UI: =http://server-ip:8041/apps=
+- Default login: =admin= / =admin.1234= (configurable in the wizard)
+
+** Architecture
+
+```
+Browser (port 3000)
+    │
+    ▼
+┌───────────────────────────┐
+│  web viewer (nginx)       │
+│  /            → viewer UI │
+│  /api/*       → proxy API │  ← auto-injects credentials
+│  /apps/*      → admin UI  │
+└───────────┬───────────────┘
+            │   Docker network: pacs
+            ▼
+┌───────────────────────────┐
+│  DICOM server (port 8041) │
+│  - stores DICOM images    │
+│  - DICOMweb / REST API    │
+│  - ingest automation      │
+└───────────┬───────────────┘
+            │  port 104 (DICOM protocol)
+       External PACS / modalities / import scripts
+```
+
+The reverse proxy inside the viewer container serves the branded UI at the
+root, proxies all =/api/*= and =/apps/*= requests to the DICOM server (injecting
+credentials so the browser never prompts), and proxies =/apps/*= to its admin UI.
+
+** Services
+
+- =pacs-viewer= — web viewer (nginx + reverse proxy), port =3000=.
+- =pacs-server= — DICOM server, ports =8041= (HTTP) and =104= (DICOM).
+
+Both run on the shared =pacs= Docker network and store data persistently in the
+=data/= directory (DICOM images + SQLite index).
+
+** Setup Wizard Configuration
+
+Configure before deploying: app name, footer text, show/hide logo, ports
+(viewer, HTTP, DICOM), DICOM AE Title, server display name, username/password,
+and the Docker network name.
+
+** Import DICOM Studies
+
+1. **Upload from the viewer** =http://server-ip:3000=.
+2. **Send from an existing PACS / modality** — AE Title =PACS=, port =104=,
+   IP =your-server-ip=.
+3. **Bulk import with the Python script**:
+   #+begin_src bash
+   python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir
+   python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir admin admin.1234
+   #+end_src
+
+** Key Features
+
+- Custom dark theme and hospital branding (logo, favicon, footer).
+- Automatic study enrichment: empty descriptions are filled from the
+  institution name on ingest.
+- Automatic compression: incoming images are transcoded to JPEG 2000.
+- WebDAV upload (uploads allowed, deletes blocked).
+- No login prompts: the reverse proxy auto-authenticates to the DICOM server.
+- Persistent storage: data survives restarts.

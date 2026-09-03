@@ -1,5 +1,5 @@
 {
-  "Name" : "M A P D R",
+  "Name" : "PACS Viewer",
   "StorageDirectory" : "/var/lib/orthanc/db",
   "IndexDirectory" : "/var/lib/orthanc/db",
   "StorageCompression" : true,
@@ -7,52 +7,47 @@
   "MaximumPatientCount" : 0,
   "MaximumStorageCacheSize" : 128,
   "LuaScripts" : [
+    "/etc/orthanc/lua/enrich-study-description.lua"
   ],
-  "Plugins" : [ 
+  "Plugins" : [
     "/usr/share/orthanc/plugins", "/usr/local/share/orthanc/plugins"
   ],
   "ConcurrentJobs" : 2,
   "HttpServerEnabled" : true,
   "OrthancExplorerEnabled" : true,
-  "HttpPort" : 8042,
-  "HttpDescribeErrors" : true,
-  "HttpCompressionEnabled" : true,
+  "HttpPort" : 8041,
   "WebDavEnabled" : true,
   "WebDavDeleteAllowed" : false,
   "WebDavUploadAllowed" : true,
   "DicomServerEnabled" : true,
-  "DicomAet" : "MAPDR",
-  "DicomCheckCalledAet" : true,
-  "DicomPort" : 4242,
+  "DicomAet" : "PACS",
+  "DicomCheckCalledAet" : false,
+  "DicomPort" : 104,
   "DefaultEncoding" : "Latin1",
   "AcceptedTransferSyntaxes" : [ "1.2.840.10008.1.*" ],
-  "UnknownSopClassAccepted" : false,
-  "DicomScpTimeout" : 30,
+  "UnknownSopClassAccepted" : true,
   "RemoteAccessAllowed" : true,
   "SslEnabled" : false,
   "SslCertificate" : "certificate.pem",
-  "SslMinimumProtocolVersion" : 4,
   "SslVerifyPeers" : false,
   "SslTrustedClientCertificates" : "trustedClientCertificates.pem",
   "AuthenticationEnabled" : true,
     "RegisteredUsers" : {
-    "mapdr" : "changestrongpassword"
+    "admin" : "admin.1234"
   },
   "DicomTlsEnabled" : false,
   "DicomTlsRemoteCertificateRequired" : true,
   "DicomAlwaysAllowEcho" : true,
   "DicomAlwaysAllowStore" : true,
-  "DicomAlwaysAllowFind" : false,
-  "DicomAlwaysAllowFindWorklist" : false,
-  "DicomAlwaysAllowGet" : false,
-  "DicomAlwaysAllowMove" : false,
-  "DicomCheckModalityHost" : false,
+  "DicomAlwaysAllowFind" : true,
+  "DicomAlwaysAllowFindWorklist" : true,
+  "DicomAlwaysAllowGet" : true,
+  "DicomAlwaysAllowMove" : true,
+  "DicomCheckModalityHost" : true,
   "DicomModalities" : {
-      // "MAPDRX" : [ "MAPDR", "127.0.0.1", 11112]
   },
-  "DicomModalitiesInDatabase" : false,
-  "DicomEchoChecksFind" : false,
-  "DicomScuTimeout" : 10,
+  "DicomModalitiesInDatabase" : true,
+  "DicomEchoChecksFind" : true,
   "DicomScuPreferredTransferSyntax" : "1.2.840.10008.1.2.1",
   "DicomThreadsCount" : 4,
   "OrthancPeers" : {
@@ -64,24 +59,12 @@
   "HttpTimeout" : 60,
   "HttpsVerifyPeers" : true,
   "HttpsCACertificates" : "/etc/ssl/certs/ca-certificates.crt",
-"UserMetadata" : {
-    // "Sample" : 1024
-  },
-  "UserContentType" : {
-    // "sample" : 1024
-    // "sample2" : [ 1025, "application/pdf" ]
-  },
   "StableAge" : 60,
   "StrictAetComparison" : false,
-  "StoreMD5ForAttachments" : true,
   "LimitFindResults" : 0,
   "LimitFindInstances" : 0,
-  "LogExportedResources" : false,
-  "KeepAlive" : true,
-  "TcpNoDelay" : true,
   "HttpThreadsCount" : 50,
   "StoreDicom" : true,
-  "DicomAssociationCloseDelay" : 5,
   "QueryRetrieveSize" : 100,
   "CaseSensitivePN" : false,
   "LoadPrivateDictionary" : true,
@@ -94,8 +77,6 @@
   "MediaArchiveSize" : 1,
   "StorageAccessOnFind" : "Always",
   "MetricsEnabled" : true,
-  "ExecuteLuaEnabled" : false,
-  "HttpRequestTimeout" : 30,
   "DefaultPrivateCreator" : "",
   "StorageCommitmentReportsSize" : 100,
   "TranscodeDicomProtocol" : true,
@@ -104,17 +85,9 @@
   "IngestTranscodingOfUncompressed" : true,
   "IngestTranscodingOfCompressed" : true,
   "DicomLossyTranscodingQuality" : 90,
-  "SyncStorageArea" : true,
-  "MallocArenaMax" : 5,
   "DeidentifyLogs" : true,
   "DeidentifyLogsDicomVersion" : "2021b",
-  "MaximumPduLength" : 16384,
   "CheckRevisions" : false,
   "SynchronousZipStream" : true,
-  "ZipLoaderThreads": 0,
-  "Warnings" : {
-    "W001_TagsBeingReadFromStorage": true,
-    "W002_InconsistentDicomTagsInDb": true
-  }
-
+  "ZipLoaderThreads": 0
 }

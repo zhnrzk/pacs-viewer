@@ -1,0 +1,639 @@
+/* === Temporary PACS Theme === */
+
+*, *::before, *::after {
+  font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+[class*="icon-"],
+[class*="Icon"],
+svg,
+.svg {
+  font-family: inherit !important;
+}
+
+:root {
+  --default-color: #6b8b9e;
+  --hover-color: #9eb0c2;
+  --active-color: #7e9eb6;
+  --ui-border-color: rgba(60, 75, 90, 0.3);
+  --ui-border-color-dark: rgba(40, 55, 68, 0.2);
+  --ui-border-color-active: #6b8b9e;
+  --primary-background-color: #060a0f;
+  --box-background-color: #0e141d;
+  --ui-sky-blue: #6b8b9e;
+  --ui-gray-light: #1e2834;
+  --ui-gray: #121820;
+  --ui-gray-dark: #0c1118;
+  --ui-gray-darker: #090d13;
+  --ui-gray-darkest: #05080d;
+  --text-color-active: #dce2ea;
+  --text-primary-color: #bcc5d1;
+  --text-secondary-color: #6b7a8f;
+  --text-disabled-color: #3e4957;
+  --input-background-color: #0e141d;
+  --input-placeholder-color: #495668;
+  --table-hover-color: #111720;
+  --table-text-primary-color: #c4ccd7;
+  --table-text-secondary-color: #7a8799;
+  --large-numbers-color: #8aa4b5;
+  --state-error: #d18b8e;
+  --state-error-border: #9e4448;
+  --state-error-text: #d49396;
+  --datePicker-input-background: #0e141d;
+  --series-count-background-color: #1e2834;
+  --top-bar-height: 42px;
+  --brand-gold: #c49b5e;
+  --brand-gold-dim: #8b6f44;
+  --accent-teal: #5c8a9e;
+  --accent-cool: #5f7e94;
+}
+
+/* Header — +1 size over content, all caps */
+.NavBar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(6, 10, 15, 0.96) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(60, 75, 90, 0.2) !important;
+}
+
+.NavBar * {
+  font-size: 17px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.NavBar .custom-brand-logo,
+.NavBar .header-brand {
+  letter-spacing: 0.08em !important;
+}
+
+/* Study list background */
+.studyBrowser .tableList,
+.StudyBrowser .tableList,
+.study-browser {
+  background: transparent !important;
+}
+
+/* Viewport */
+.viewport-element,
+.Viewport {
+  background: #020408 !important;
+}
+
+/* Toolbar */
+.toolbar-section,
+.ToolbarSection {
+  background: rgba(9, 13, 18, 0.88) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 7px !important;
+  border: 1px solid rgba(60, 75, 90, 0.18) !important;
+  padding: 4px 6px !important;
+}
+
+.toolbar-button,
+.ToolbarButton {
+  border-radius: 5px !important;
+  color: var(--text-secondary-color) !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+
+.toolbar-button:hover,
+.ToolbarButton:hover {
+  background: rgba(107, 139, 158, 0.08) !important;
+  color: var(--text-color-active) !important;
+}
+
+/* Buttons */
+.btn,
+.Button {
+  border-radius: 5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  transition: all 0.15s ease !important;
+}
+
+/* Side panel */
+.sidepanel,
+.SidePanel {
+  background: rgba(9, 13, 18, 0.98) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-left: 1px solid rgba(60, 75, 90, 0.15) !important;
+}
+
+/* Table rows */
+.tableList .tableListRow,
+.TableList .TableListRow {
+  border-bottom: 1px solid rgba(60, 75, 90, 0.08) !important;
+  transition: background 0.12s ease !important;
+}
+
+.tableList .tableListRow:hover,
+.TableList .TableListRow:hover {
+  background: rgba(107, 139, 158, 0.03) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(60, 75, 90, 0.35);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(80, 95, 110, 0.55);
+}
+
+/* Smooth transitions */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Inputs */
+input,
+select,
+textarea,
+.Input,
+.Select {
+  border-radius: 5px !important;
+  border-color: rgba(60, 75, 90, 0.25) !important;
+  background: var(--input-background-color) !important;
+  color: var(--text-primary-color) !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent-teal) !important;
+  box-shadow: 0 0 0 2px rgba(92, 138, 158, 0.1) !important;
+  outline: none !important;
+}
+
+/* Thumbnail images */
+.image-thumbnail,
+.ImageThumbnail {
+  border-radius: 5px !important;
+  overflow: hidden !important;
+}
+
+/* Snackbar */
+.sb-snackbar,
+.Snackbar {
+  border-radius: 7px !important;
+  font-weight: 500 !important;
+}
+
+/* Dropdown menus */
+.dropdown-menu,
+.DropdownMenu {
+  background: rgba(12, 17, 24, 0.98) !important;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(60, 75, 90, 0.2) !important;
+  border-radius: 7px !important;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.6) !important;
+  overflow: hidden !important;
+}
+
+.dropdown-menu .dropdown-item,
+.DropdownMenu .DropdownItem {
+  border-radius: 4px !important;
+  margin: 2px 4px !important;
+  color: var(--text-secondary-color) !important;
+  transition: background 0.1s ease, color 0.1s ease !important;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.DropdownMenu .DropdownItem:hover {
+  background: rgba(107, 139, 158, 0.08) !important;
+  color: var(--text-color-active) !important;
+}
+
+/* Patient info */
+.HeaderPatientInfo,
+.header-patient-info {
+  font-size: 12px !important;
+  color: var(--text-secondary-color) !important;
+}
+
+.HeaderPatientInfo .patientName,
+.header-patient-info .patientName {
+  color: var(--brand-gold) !important;
+  font-weight: 500 !important;
+}
+
+/* Measurement table */
+.measurement-table,
+.MeasurementTable {
+  border-spacing: 0 !important;
+}
+
+/* Modals */
+.modal-content,
+.ModalContent {
+  background: var(--ui-gray-darker) !important;
+  border: 1px solid rgba(60, 75, 90, 0.25) !important;
+  border-radius: 10px !important;
+}
+
+/* Study list title row */
+.tableListHeader,
+.TableListHeader {
+  background: transparent !important;
+  padding: 12px 8px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em !important;
+  color: var(--text-secondary-color) !important;
+}
+
+/* === Date picker dark mode === */
+.react-datepicker,
+.DateRangePicker_picker {
+  background: var(--ui-gray) !important;
+  border: 1px solid rgba(60, 75, 90, 0.3) !important;
+  border-radius: 7px !important;
+  color: var(--text-primary-color) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+}
+
+/* === react-dates calendar popup dark theme === */
+.DayPicker,
+.CalendarMonthGrid,
+.CalendarMonth,
+.CalendarMonth_caption,
+.CalendarMonth_table,
+.PresetDateRangePicker_panel,
+.DateInput_fang {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.CalendarDay {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  color: var(--text-primary-color) !important;
+}
+
+.CalendarDay:hover {
+  background: rgba(107, 139, 158, 0.15) !important;
+  color: var(--text-color-active) !important;
+}
+
+.CalendarDay__selected,
+.CalendarDay__selected_span,
+.CalendarDay__hovered_span {
+  background: var(--accent-teal) !important;
+  color: #fff !important;
+}
+
+.CalendarDay__blocked_out_of_range {
+  color: var(--text-disabled-color) !important;
+}
+
+.DayPickerNavigation_button {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.DayPickerNavigation_button:hover {
+  background: rgba(107, 139, 158, 0.15) !important;
+}
+
+.DayPickerNavigation_svg__horizontal {
+  fill: var(--text-secondary-color) !important;
+}
+
+.PresetDateRangePicker_button {
+  background: transparent !important;
+  border: 1px solid rgba(60, 75, 90, 0.2) !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  color: var(--text-primary-color) !important;
+}
+
+.PresetDateRangePicker_button:hover {
+  background: rgba(107, 139, 158, 0.15) !important;
+  color: var(--text-color-active) !important;
+}
+
+.DayPicker_weekHeader_li,
+.CalendarMonth_caption {
+  color: var(--text-secondary-color) !important;
+}
+
+.DateRangePicker_select {
+  background: var(--input-background-color) !important;
+  color: var(--text-primary-color) !important;
+  border: 1px solid rgba(60, 75, 90, 0.25) !important;
+}
+
+/* Collapse the inline DateRangePicker control into a single clean box
+   (the broad [class*="DateRange"] rules above otherwise border every nested part) */
+.DateRangePicker {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.DateRangePickerInput {
+  border: 1px solid rgba(60, 75, 90, 0.25) !important;
+  background: var(--input-background-color) !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+}
+
+.DateRangePickerInput_arrow,
+.DateRangePickerInput_arrow_svg {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.DateRangePickerInput_arrow_svg {
+  fill: var(--text-secondary-color) !important;
+}
+
+.DateInput,
+.DateInput_input {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.react-datepicker__header,
+.DatePicker__header,
+.datepicker__header,
+[class*="datepicker"] [class*="header"],
+[class*="DatePicker"] [class*="header"],
+[class*="calendar"] [class*="header"],
+[class*="Calendar"] [class*="header"] {
+  background: var(--ui-gray-dark) !important;
+  border-bottom: 1px solid rgba(60, 75, 90, 0.15) !important;
+  color: var(--text-primary-color) !important;
+}
+
+.react-datepicker__current-month,
+.DatePicker__current-month,
+.datepicker__current-month,
+[class*="calendar"] [class*="month"],
+[class*="Calendar"] [class*="month"],
+[class*="calendar"] [class*="title"],
+[class*="Calendar"] [class*="title"],
+[class*="datepicker"] [class*="month"],
+[class*="DatePicker"] [class*="month"] {
+  color: var(--text-primary-color) !important;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day,
+.DatePicker__day-name,
+.DatePicker__day,
+.datepicker__day-name,
+.datepicker__day,
+[class*="datepicker"] [class*="day"],
+[class*="DatePicker"] [class*="day"],
+[class*="calendar"] [class*="Day"],
+[class*="Calendar"] [class*="Day"] {
+  color: var(--text-primary-color) !important;
+}
+
+.react-datepicker__day:hover,
+[class*="DatePicker"] [class*="day"]:hover,
+[class*="calendar"] [class*="Day"]:hover,
+[class*="Calendar"] [class*="Day"]:hover {
+  background: rgba(107, 139, 158, 0.15) !important;
+  color: var(--text-color-active) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--in-range,
+.react-datepicker__day--in-selecting-range,
+[class*="DatePicker"] [class*="--selected"],
+[class*="DatePicker"] [class*="--in-range"],
+[class*="calendar"] [class*="selected"],
+[class*="Calendar"] [class*="selected"],
+[class*="calendar"] [class*="active"],
+[class*="Calendar"] [class*="active"] {
+  background: var(--accent-teal) !important;
+  color: #fff !important;
+}
+
+.react-datepicker__day--disabled,
+[class*="DatePicker"] [class*="--disabled"],
+[class*="calendar"] [class*="disabled"],
+[class*="Calendar"] [class*="disabled"] {
+  color: var(--text-disabled-color) !important;
+}
+
+.react-datepicker__navigation-icon::before,
+[class*="DatePicker"] [class*="navigation"]::before,
+[class*="calendar"] button::before,
+[class*="Calendar"] button::before {
+  border-color: var(--text-secondary-color) !important;
+}
+
+.react-datepicker__input-container input,
+.DatePicker__input input,
+[class*="datepicker"] input,
+[class*="DatePicker"] input {
+  background: var(--input-background-color) !important;
+  color: var(--text-primary-color) !important;
+  border: 1px solid rgba(60, 75, 90, 0.25) !important;
+  border-radius: 5px !important;
+}
+
+/* Native date/time inputs in dark mode */
+input[type="date"],
+input[type="month"],
+input[type="week"],
+input[type="datetime-local"] {
+  color-scheme: dark !important;
+}
+
+/* Force dark bg on any popup/dropdown that appears white */
+[class*="popup"],
+[class*="Popup"],
+[class*="overlay"],
+[class*="Overlay"],
+[class*="dropdown"],
+[class*="Dropdown"] {
+  background: var(--ui-gray) !important;
+  color: var(--text-primary-color) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+}
+
+[class*="popup"] *,
+[class*="Popup"] *,
+[class*="overlay"] *,
+[class*="Overlay"] *,
+[class*="dropdown"] *,
+[class*="Dropdown"] * {
+  color: var(--text-primary-color) !important;
+}
+
+/* Nuke any white background still showing */
+div[style*="background: rgb(255, 255, 255)"],
+div[style*="background:#fff"],
+div[style*="background: #fff"],
+div[style*="background:#ffffff"],
+div[style*="background: #ffffff"],
+div[style*="background-color: rgb(255, 255, 255)"],
+div[style*="background-color:#fff"],
+div[style*="background-color: #fff"] {
+  background: var(--ui-gray) !important;
+  background-color: var(--ui-gray) !important;
+}
+
+/* Eliminate white borders on popups/dropdowns */
+[class*="popup"],
+[class*="Popup"],
+[class*="overlay"],
+[class*="Overlay"],
+[class*="dropdown"],
+[class*="Dropdown"],
+[class*="datepicker"],
+[class*="DatePicker"] {
+  border-color: rgba(60, 75, 90, 0.2) !important;
+  outline: none !important;
+}
+
+/* Kill any remaining white borders */
+div[style*="border-color: rgb(255, 255, 255)"],
+div[style*="border: 1px solid rgb(255"],
+input[style*="border-color: rgb(255, 255, 255)"],
+input[style*="border: 1px solid rgb(255"] {
+  border-color: rgba(60, 75, 90, 0.2) !important;
+}
+
+/* Show rows per page dropdown — match main background */
+[class*="rowsPerPage"],
+[class*="RowsPerPage"],
+[class*="rows-selector"],
+[class*="RowsSelector"],
+[class*="pagination"] select,
+[class*="Pagination"] select,
+.table-footer select,
+.tableFooter select,
+select[id*="rows"],
+select[class*="rows"] {
+  background: var(--ui-gray-dark) !important;
+  color: var(--text-primary-color) !important;
+  border-color: rgba(60, 75, 90, 0.25) !important;
+}
+
+[class*="rowsPerPage"] option,
+[class*="RowsPerPage"] option,
+.table-footer option,
+.tableFooter option,
+select[class*="rows"] option {
+  background: var(--ui-gray-dark) !important;
+  color: var(--text-primary-color) !important;
+}
+
+/* Study list item font size — match the rest of the UI */
+.studyItemBox,
+.tableListRow,
+.TableListRow,
+.study-browser .tableList,
+.StudyBrowser .tableList,
+.studyItemBox * {
+  font-size: 12px !important;
+}
+
+/* Study list item polish */
+.studyItemBox .studyModality {
+  color: var(--brand-gold) !important;
+  background: rgba(196, 155, 94, 0.08) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.03em !important;
+}
+
+.studyItemBox .studyDate {
+  color: var(--text-secondary-color) !important;
+}
+
+.studyItemBox .studyDescription {
+  color: var(--text-color-active) !important;
+  font-weight: 500 !important;
+}
+
+/* Hide "StudyList" heading */
+.studyListHeader,
+.StudyListHeader,
+div[class*="studyList" i] h2,
+div[class*="StudyList" i] h2,
+section[class*="studyList" i] h2,
+section[class*="StudyList" i] h2 {
+  display: none !important;
+}
+
+/* Investigational use & studies options */
+.entry-header,
+.studyListFilter,
+.StudyListFilter {
+  background: transparent !important;
+}
+
+/* Hide top-right header options/settings icon */
+#options,
+#options-settings-icon,
+[data-cy="options-menu"],
+[id*="options-settings"],
+.option-dropdown {
+  display: none !important;
+}
+
+div:has(+ [id*="options"]) {
+  display: none !important;
+}
+
+/* Selected / active states */
+.active,
+.selected,
+[aria-selected="true"],
+[data-active="true"] {
+  color: var(--text-color-active) !important;
+}
+
+/* Subtle color accents for different sections */
+.HeaderPatientInfo .mrn,
+.header-patient-info .mrn {
+  color: var(--accent-teal) !important;
+}
+
+/* Date text */
+[class*="date"],
+[class*="Date"] {
+  color: var(--text-secondary-color) !important;
+}
+
+/* Brand-level polish for series thumbnails */
+.thumbnailList .series-description,
+.ThumbnailList .series-description {
+  color: var(--text-primary-color) !important;
+  font-weight: 500 !important;
+}
