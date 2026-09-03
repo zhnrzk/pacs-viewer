@@ -27,7 +27,7 @@ services:
       - ./manifest.json:/usr/share/nginx/html/manifest.json:ro
       - ./assets/custom.css:/usr/share/nginx/html/custom.css:ro
       - ./index.html:/usr/share/nginx/html/index.html:ro
-      - ./assets/favicon.svg:/usr/share/nginx/html/favicon.svg:ro
+      - ./assets/favicon.svg:/usr/share/nginx/html/favicon.svg:ro{{LOGO_MOUNT}}
     restart: always
     networks:
       - {{NETWORK_NAME}}

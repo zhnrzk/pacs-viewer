@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PACS viewer Setup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; background: #0a0a0a; }
+    body {
+      display: flex;
+      flex-direction: column;
+      color: #d4d4d4;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    #terminal {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    #terminal::-webkit-scrollbar { width: 6px; }
+    #terminal::-webkit-scrollbar-track { background: #0a0a0a; }
+    #terminal::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    .ln { white-space: pre-wrap; word-break: break-all; min-height: 1.6em; }
+    .dim { color: #555; }
+    .grn { color: #d4d4d4; }
+    .red { color: #ff4444; }
+    .amb { color: #888; }
+    .wht { color: #fff; font-weight: bold; }
+    .plr { color: #a0a0a0; }
+    .fix { color: #666; }
+    #input-row {
+      display: none;
+      align-items: center;
+      padding: 0 16px 16px;
+      flex-shrink: 0;
+    }
+    #ptxt {
+      color: #a0a0a0;
+      white-space: pre;
+      flex-shrink: 0;
+    }
+    #cmd {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #d4d4d4;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      caret-color: #d4d4d4;
+      padding: 0;
+    }
+    #cmd::selection { background: #444; color: #0a0a0a; }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <div id="input-row">
+    <span id="ptxt"></span>
+    <input id="cmd" type="text" autocomplete="off" spellcheck="false">
+  </div>
+  <input type="file" id="logofile" accept="image/*" style="display:none">
+  <script>
+    const T = document.getElementById('terminal');
+    const inputRow = document.getElementById('input-row');
+    const ptxt = document.getElementById('ptxt');
+    const cmd = document.getElementById('cmd');
+
+    function print(text, cls) {
+      const d = document.createElement('div');
+      d.className = 'ln' + (cls ? ' ' + cls : '');
+      d.textContent = text;
+      T.appendChild(d);
+      T.scrollTop = T.scrollHeight;
+    }
+
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function ask(label, def, secret) {
+      return new Promise(resolve => {
+        inputRow.style.display = 'flex';
+        ptxt.textContent = secret ? label + ': ' : label + ' [' + def + ']: ';
+        cmd.type = secret ? 'password' : 'text';
+        cmd.value = def;
+        requestAnimationFrame(function() { cmd.focus(); cmd.select(); });
+
+        function onKey(e) {
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          cmd.removeEventListener('keydown', onKey);
+          var val = cmd.value || def;
+          print(ptxt.textContent + (secret ? '*'.repeat(val.length) : val), 'plr');
+          inputRow.style.display = 'none';
+          resolve(val);
+        }
+        cmd.addEventListener('keydown', onKey);
+      });
+    }
+
+    function askFile(label) {
+      return new Promise(resolve => {
+        inputRow.style.display = 'flex';
+        ptxt.textContent = label + ' (press Enter or click Browse): ';
+        cmd.type = 'text';
+        cmd.value = '';
+        requestAnimationFrame(function() { cmd.focus(); });
+
+        var fileInput = document.getElementById('logofile');
+        var browseLink = document.createElement('span');
+        browseLink.textContent = '[Browse...]';
+        browseLink.style.cssText = 'color:#d4d4d4;cursor:pointer;margin-left:8px;text-decoration:underline;';
+        inputRow.appendChild(browseLink);
+
+        function cleanup() {
+          cmd.removeEventListener('keydown', onKey);
+          browseLink.removeEventListener('click', onBrowse);
+          if (browseLink.parentNode) browseLink.parentNode.removeChild(browseLink);
+        }
+
+        function triggerFile() {
+          print(ptxt.textContent + 'selecting file...', 'plr');
+          inputRow.style.display = 'none';
+          fileInput.click();
+        }
+
+        function onBrowse(e) {
+          e.preventDefault();
+          cleanup();
+          triggerFile();
+        }
+
+        function onKey(e) {
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          cleanup();
+          inputRow.style.display = 'none';
+          var val = cmd.value.trim();
+          if (val !== '') {
+            print(ptxt.textContent + val, 'plr');
+            resolve('');
+            return;
+          }
+          triggerFile();
+        }
+
+        fileInput.onchange = function() {
+          var f = fileInput.files && fileInput.files[0];
+          fileInput.value = '';
+          if (!f) { inputRow.style.display = 'flex'; cmd.focus(); return; }
+          var reader = new FileReader();
+          reader.onload = function() {
+            print('      [✓] Attached: ' + f.name + ' (' + (f.size/1024).toFixed(1) + ' KB)', 'grn');
+            resolve(reader.result);
+          };
+          reader.onerror = function() {
+            inputRow.style.display = 'flex'; cmd.focus();
+            resolve('');
+          };
+          reader.readAsDataURL(f);
+        };
+
+        fileInput.addEventListener('cancel', function onCancel() {
+          fileInput.removeEventListener('cancel', onCancel);
+          inputRow.style.display = 'flex';
+          cmd.focus();
+        });
+
+        cmd.addEventListener('keydown', onKey);
+        browseLink.addEventListener('click', onBrowse);
+      });
+    }
+
+    async function main() {
+      print('');
+      print('  PACS viewer Setup Wizard', 'wht');
+      print('  ─────────────────────────', 'dim');
+      print('');
+
+      var data;
+      try {
+        var r = await fetch('/api/preflight');
+        data = await r.json();
+      } catch (e) {
+        print('[✗] Cannot reach server: ' + e.message, 'red');
+        return;
+      }
+
+      for (var i = 0; i < data.checks.length; i++) {
+        await wait(120);
+        var c = data.checks[i];
+        var tag = c.status === 'pass' ? '[✓]' : c.status === 'fail' ? '[✗]' : '[!]';
+        var cls = c.status === 'pass' ? 'grn' : c.status === 'fail' ? 'red' : 'amb';
+        print('  ' + tag + ' ' + c.name, cls);
+        if (c.fix) print('      → ' + c.fix, 'fix');
+      }
+
+      var ok = data.checks.every(function(c) { return c.status !== 'fail'; });
+      print('');
+      print(ok ? '  All checks passed.' : '  Some checks failed. Deployment may fail.', ok ? 'grn' : 'amb');
+      print('');
+
+      print('── Configuration ──────────────────────────', 'dim');
+      print('');
+
+      var C = {};
+      var fields = [
+        ['appName',         'Application name',    'PACS Viewer', false],
+        ['footerText',      'Footer text',         'Radiology Department', false],
+        ['viewerPort',      'Viewer port',         '3000', false],
+        ['httpPort',        'DICOM server HTTP port', '8041', false],
+        ['dicomPort',       'DICOM port',          '104', false],
+        ['aet',             'AET',                  'PACS', false],
+        ['dicomServerName', 'DICOM server name',    'DICOM server', false],
+        ['username',        'Username',             'admin', false],
+        ['password',        'Password',             'admin.1234', true],
+        ['networkName',     'Docker network',       'pacs', false],
+        ['showLogo',        'Show logo in header',  'Y', false],
+      ];
+
+      for (var j = 0; j < fields.length; j++) {
+        var f = fields[j];
+        C[f[0]] = await ask(f[1], f[2], f[3]);
+      }
+
+      var wantLogo = await ask('Attach a custom logo image?', 'N');
+      C.logo = '';
+      if (/^[Yy]/.test(wantLogo)) {
+        C.logo = await askFile('Select the logo image file (PNG/SVG/JPG)');
+      }
+
+      print('');
+      print('── Summary ────────────────────────────────', 'dim');
+      var rows = [
+        ['app_name',     C.appName],
+        ['footer',       C.footerText],
+        ['viewer_port',  C.viewerPort],
+        ['http_port',    C.httpPort],
+        ['dicom_port',   C.dicomPort],
+        ['aet',          C.aet],
+        ['server_name',  C.dicomServerName],
+        ['username',     C.username],
+        ['password',     C.password.replace(/./g, '*')],
+        ['network',      C.networkName],
+        ['show_logo',    C.showLogo],
+        ['custom_logo',  C.logo ? 'attached' : 'none'],
+      ];
+      for (var k = 0; k < rows.length; k++) {
+        print('  ' + rows[k][0].padEnd(16) + rows[k][1]);
+      }
+      print('───────────────────────────────────────────', 'dim');
+
+      print('');
+      var yes = await ask('Proceed with deployment?', 'Y');
+      if (!/^[Yy]/.test(yes)) {
+        print('');
+        print('  Aborted.', 'amb');
+        return;
+      }
+
+      print('');
+      print('[*] Generating configuration files...', 'dim');
+
+      try {
+        var dr = await fetch('/api/deploy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            appName: C.appName,
+            footerText: C.footerText,
+            viewerPort: parseInt(C.viewerPort) || 3000,
+            httpPort: parseInt(C.httpPort) || 8041,
+            dicomPort: parseInt(C.dicomPort) || 104,
+            aet: C.aet,
+            dicomServerName: C.dicomServerName,
+            username: C.username,
+            password: C.password,
+            networkName: C.networkName,
+            showLogo: C.showLogo,
+            logo: C.logo,
+          }),
+        });
+        var res = await dr.json();
+
+        if (res.success) {
+          var files = ['pacs-server.json','nginx_viewer.conf','viewer.js','index.html','manifest.json','docker-compose.yml'];
+          for (var m = 0; m < files.length; m++) {
+            await wait(60);
+            print('      [✓] ' + files[m], 'grn');
+          }
+          print('');
+          print('[*] Starting services...', 'dim');
+          await wait(300);
+          print('');
+          print('  [✓] Deployment complete.', 'grn');
+          print('  Viewer: ' + res.viewerUrl, 'wht');
+          print('');
+          print('  Refresh this page to reconfigure.', 'dim');
+        } else {
+          print('');
+          print('[✗] Deployment failed:', 'red');
+          print('  ' + res.error, 'red');
+        }
+      } catch (e) {
+        print('');
+        print('[✗] Deployment failed: ' + e.message, 'red');
+      }
+    }
+
+    document.addEventListener('click', function() {
+      if (inputRow.style.display !== 'none') cmd.focus();
+    });
+
+    main();
+  </script>
+</body>
+</html>

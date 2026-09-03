@@ -109,9 +109,11 @@ Both run on the shared =pacs= Docker network and store data persistently in the
 
 ** Setup Wizard Configuration
 
-Configure before deploying: app name, footer text, show/hide logo, ports
-(viewer, HTTP, DICOM), DICOM AE Title, server display name, username/password,
-and the Docker network name.
+Configure before deploying: app name, footer text, show/hide logo, **upload a
+custom logo image** (PNG/SVG/JPG), ports (viewer, HTTP, DICOM), DICOM AE Title,
+server display name, username/password, and the Docker network name. If a logo
+is uploaded it replaces the default favicon in the header; otherwise the
+built-in =favicon.svg= is used.
 
 ** Import DICOM Studies
 

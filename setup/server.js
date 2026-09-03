@@ -8,7 +8,7 @@ const PORT = 3001;
 const PROJECT_ROOT = '/project';
 const TEMPLATES_DIR = '/app/templates';
 
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 function runPreflightChecks() {
@@ -98,6 +98,25 @@ app.post('/api/deploy', (req, res) => {
   const credentials = `${config.username}:${config.password}`;
   const authBase64 = Buffer.from(credentials).toString('base64');
 
+  // Handle optional custom logo upload (base64 data URL, e.g. data:image/png;base64,...)
+  let logoHref = '/favicon.svg';
+  let logoMount = '';
+  if (config.logo && /^data:image\//i.test(config.logo)) {
+    try {
+      const mimeMatch = config.logo.match(/^data:image\/([a-zA-Z0-9.+-]+);base64,/i);
+      var rawExt = mimeMatch ? (mimeMatch[1].toLowerCase() === 'jpeg' ? 'jpg' : mimeMatch[1].toLowerCase() || 'png') : 'png';
+      const ext = rawExt === 'svg+xml' ? 'svg' : rawExt;
+      const base64Data = config.logo.split(',')[1];
+      const logoFile = `custom-logo.${ext}`;
+      fs.writeFileSync(path.join(PROJECT_ROOT, 'assets', logoFile), Buffer.from(base64Data, 'base64'));
+      logoHref = `/${logoFile}`;
+      logoMount = `\n      - ./assets/${logoFile}:/usr/share/nginx/html/${logoFile}:ro`;
+      console.log(`Custom logo saved: assets/${logoFile}`);
+    } catch (err) {
+      console.error('Failed to save custom logo:', err.message);
+    }
+  }
+
   const variables = {
     APP_NAME: config.appName || 'PACS Viewer',
     FOOTER_TEXT: config.footerText || 'Radiology Department',
@@ -111,6 +130,8 @@ app.post('/api/deploy', (req, res) => {
     DICOM_SERVER_NAME: config.dicomServerName || 'DICOM server',
     AUTH_BASE64: authBase64,
     SHOW_LOGO: /^[Yy]/.test(config.showLogo) ? 'true' : 'false',
+    LOGO_HREF: logoHref,
+    LOGO_MOUNT: logoMount,
   };
 
   const templateFiles = [

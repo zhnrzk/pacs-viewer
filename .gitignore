@@ -3,6 +3,7 @@ pacs-server.json
 nginx_viewer.conf
 viewer.js
 index.html
+!setup/public/index.html
 manifest.json
 
 # Runtime data
