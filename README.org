@@ -65,26 +65,17 @@ Open =http://localhost:3001=, fill in the configuration form, and click
 ** Architecture
 
 #+begin_example
-                        LAN clients / browser
-                                 |
-                                 v    port 3000 (public entry point)
-   +------------------------------------------------------------+
-   |  pacs-viewer  (nginx + OHIF)                                |
-   |    /                 -> branded viewer UI                  |
-   |    /api/*            -> Orthanc REST / DICOMweb            |
-   |    /apps/*           -> Orthanc admin UI                   |
-   +-------------------------+----------------------------------+
-                             |  Docker network: pacs
-                             v
-   +------------------------------------------------------------+
-   |  pacs-server  (Orthanc)                                     |
-   |    - DICOM storage + index           (./data)              |
-   |    - DICOMweb / REST API  port 8041 (host + viewer proxy)  |
-   |    - Orthanc Explorer      (/apps)                         |
-   +-------------------------+----------------------------------+
-                             |  port 104 (DICOM protocol)
-                             v
-              External PACS / modalities / import scripts
+LAN clients / browser
+        |
+        v  port 3000
+pacs-viewer  (nginx + OHIF: viewer UI, /api/*, /apps/*)
+        |
+        v  Docker network: pacs
+pacs-server  (Orthanc: DICOM storage, REST/DICOMweb, /apps)
+        |
+        |  port 104 (DICOM)
+        v
+External PACS / modalities / import scripts
 #+end_example
 
 Two containers are started on the shared =pacs= Docker network. The
