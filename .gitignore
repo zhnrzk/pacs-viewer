@@ -1,10 +1,10 @@
 # Generated config files (created by setup wizard from templates/)
-pacs-server.json
-nginx_viewer.conf
-viewer.js
-index.html
-!setup/public/index.html
-manifest.json
+/pacs-server.json
+/nginx_viewer.conf
+/viewer.js
+/index.html
+!/setup/public/index.html
+/manifest.json
 
 # Runtime data
 data/

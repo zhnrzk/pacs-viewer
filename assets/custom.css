@@ -1,7 +1,7 @@
-/* === Temporary PACS Theme === */
+/* === PACS Theme — Neutral Monochrome === */
 
 *, *::before, *::after {
-  font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'Consolas', 'DejaVu Sans Mono', monospace !important;
 }
 
 [class*="icon-"],
@@ -12,51 +12,45 @@ svg,
 }
 
 :root {
-  --default-color: #6b8b9e;
-  --hover-color: #9eb0c2;
-  --active-color: #7e9eb6;
-  --ui-border-color: rgba(60, 75, 90, 0.3);
-  --ui-border-color-dark: rgba(40, 55, 68, 0.2);
-  --ui-border-color-active: #6b8b9e;
-  --primary-background-color: #060a0f;
-  --box-background-color: #0e141d;
-  --ui-sky-blue: #6b8b9e;
-  --ui-gray-light: #1e2834;
-  --ui-gray: #121820;
-  --ui-gray-dark: #0c1118;
-  --ui-gray-darker: #090d13;
-  --ui-gray-darkest: #05080d;
-  --text-color-active: #dce2ea;
-  --text-primary-color: #bcc5d1;
-  --text-secondary-color: #6b7a8f;
-  --text-disabled-color: #3e4957;
-  --input-background-color: #0e141d;
-  --input-placeholder-color: #495668;
-  --table-hover-color: #111720;
-  --table-text-primary-color: #c4ccd7;
-  --table-text-secondary-color: #7a8799;
-  --large-numbers-color: #8aa4b5;
-  --state-error: #d18b8e;
-  --state-error-border: #9e4448;
-  --state-error-text: #d49396;
-  --datePicker-input-background: #0e141d;
-  --series-count-background-color: #1e2834;
+  --default-color: #888;
+  --hover-color: #999;
+  --active-color: #aaa;
+  --ui-border-color: rgba(120, 120, 120, 0.25);
+  --ui-border-color-dark: rgba(80, 80, 80, 0.2);
+  --ui-border-color-active: #888;
+  --primary-background-color: #0a0a0a;
+  --box-background-color: #111;
+  --ui-sky-blue: #888;
+  --ui-gray-light: #1a1a1a;
+  --ui-gray: #141414;
+  --ui-gray-dark: #0e0e0e;
+  --ui-gray-darker: #0b0b0b;
+  --ui-gray-darkest: #060606;
+  --text-color-active: #e0e0e0;
+  --text-primary-color: #c8c8c8;
+  --text-secondary-color: #777;
+  --text-disabled-color: #444;
+  --input-background-color: #111;
+  --input-placeholder-color: #555;
+  --table-hover-color: #161616;
+  --table-text-primary-color: #c0c0c0;
+  --table-text-secondary-color: #777;
+  --large-numbers-color: #999;
+  --state-error: #b06060;
+  --state-error-border: #804040;
+  --state-error-text: #c07070;
+  --datePicker-input-background: #111;
+  --series-count-background-color: #1a1a1a;
   --top-bar-height: 42px;
-  --brand-gold: #c49b5e;
-  --brand-gold-dim: #8b6f44;
-  --accent-teal: #5c8a9e;
-  --accent-cool: #5f7e94;
 }
 
-/* Header — +1 size over content, all caps */
+/* Header */
 .NavBar {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background: rgba(6, 10, 15, 0.96) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(60, 75, 90, 0.2) !important;
+  background: #0c0c0c !important;
+  border-bottom: 1px solid rgba(120, 120, 120, 0.15) !important;
 }
 
 .NavBar * {
@@ -80,61 +74,57 @@ svg,
 /* Viewport */
 .viewport-element,
 .Viewport {
-  background: #020408 !important;
+  background: #020202 !important;
 }
 
 /* Toolbar */
 .toolbar-section,
 .ToolbarSection {
-  background: rgba(9, 13, 18, 0.88) !important;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 7px !important;
-  border: 1px solid rgba(60, 75, 90, 0.18) !important;
+  background: rgba(10, 10, 10, 0.92) !important;
+  border-radius: 5px !important;
+  border: 1px solid rgba(120, 120, 120, 0.15) !important;
   padding: 4px 6px !important;
 }
 
 .toolbar-button,
 .ToolbarButton {
-  border-radius: 5px !important;
+  border-radius: 4px !important;
   color: var(--text-secondary-color) !important;
-  transition: background 0.15s ease, color 0.15s ease !important;
+  transition: background 0.12s ease, color 0.12s ease !important;
 }
 
 .toolbar-button:hover,
 .ToolbarButton:hover {
-  background: rgba(107, 139, 158, 0.08) !important;
+  background: rgba(200, 200, 200, 0.06) !important;
   color: var(--text-color-active) !important;
 }
 
 /* Buttons */
 .btn,
 .Button {
-  border-radius: 5px !important;
+  border-radius: 4px !important;
   font-weight: 500 !important;
   letter-spacing: 0.02em !important;
-  transition: all 0.15s ease !important;
+  transition: all 0.12s ease !important;
 }
 
 /* Side panel */
 .sidepanel,
 .SidePanel {
-  background: rgba(9, 13, 18, 0.98) !important;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-left: 1px solid rgba(60, 75, 90, 0.15) !important;
+  background: #0e0e0e !important;
+  border-left: 1px solid rgba(120, 120, 120, 0.12) !important;
 }
 
 /* Table rows */
 .tableList .tableListRow,
 .TableList .TableListRow {
-  border-bottom: 1px solid rgba(60, 75, 90, 0.08) !important;
-  transition: background 0.12s ease !important;
+  border-bottom: 1px solid rgba(120, 120, 120, 0.08) !important;
+  transition: background 0.1s ease !important;
 }
 
 .tableList .tableListRow:hover,
 .TableList .TableListRow:hover {
-  background: rgba(107, 139, 158, 0.03) !important;
+  background: rgba(200, 200, 200, 0.03) !important;
 }
 
 /* Scrollbar */
@@ -148,15 +138,15 @@ svg,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(60, 75, 90, 0.35);
+  background: rgba(120, 120, 120, 0.3);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(80, 95, 110, 0.55);
+  background: rgba(150, 150, 150, 0.45);
 }
 
-/* Smooth transitions */
+/* Smooth scrolling */
 * {
   scroll-behavior: smooth;
 }
@@ -167,50 +157,48 @@ select,
 textarea,
 .Input,
 .Select {
-  border-radius: 5px !important;
-  border-color: rgba(60, 75, 90, 0.25) !important;
+  border-radius: 4px !important;
+  border-color: rgba(120, 120, 120, 0.2) !important;
   background: var(--input-background-color) !important;
   color: var(--text-primary-color) !important;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+  transition: border-color 0.12s ease !important;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--accent-teal) !important;
-  box-shadow: 0 0 0 2px rgba(92, 138, 158, 0.1) !important;
+  border-color: #777 !important;
+  box-shadow: none !important;
   outline: none !important;
 }
 
 /* Thumbnail images */
 .image-thumbnail,
 .ImageThumbnail {
-  border-radius: 5px !important;
+  border-radius: 4px !important;
   overflow: hidden !important;
 }
 
 /* Snackbar */
 .sb-snackbar,
 .Snackbar {
-  border-radius: 7px !important;
+  border-radius: 5px !important;
   font-weight: 500 !important;
 }
 
 /* Dropdown menus */
 .dropdown-menu,
 .DropdownMenu {
-  background: rgba(12, 17, 24, 0.98) !important;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  border: 1px solid rgba(60, 75, 90, 0.2) !important;
-  border-radius: 7px !important;
-  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.6) !important;
+  background: #0e0e0e !important;
+  border: 1px solid rgba(120, 120, 120, 0.18) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
   overflow: hidden !important;
 }
 
 .dropdown-menu .dropdown-item,
 .DropdownMenu .DropdownItem {
-  border-radius: 4px !important;
+  border-radius: 3px !important;
   margin: 2px 4px !important;
   color: var(--text-secondary-color) !important;
   transition: background 0.1s ease, color 0.1s ease !important;
@@ -218,7 +206,7 @@ textarea:focus {
 
 .dropdown-menu .dropdown-item:hover,
 .DropdownMenu .DropdownItem:hover {
-  background: rgba(107, 139, 158, 0.08) !important;
+  background: rgba(200, 200, 200, 0.06) !important;
   color: var(--text-color-active) !important;
 }
 
@@ -231,7 +219,7 @@ textarea:focus {
 
 .HeaderPatientInfo .patientName,
 .header-patient-info .patientName {
-  color: var(--brand-gold) !important;
+  color: var(--text-color-active) !important;
   font-weight: 500 !important;
 }
 
@@ -245,8 +233,8 @@ textarea:focus {
 .modal-content,
 .ModalContent {
   background: var(--ui-gray-darker) !important;
-  border: 1px solid rgba(60, 75, 90, 0.25) !important;
-  border-radius: 10px !important;
+  border: 1px solid rgba(120, 120, 120, 0.2) !important;
+  border-radius: 8px !important;
 }
 
 /* Study list title row */
@@ -265,10 +253,10 @@ textarea:focus {
 .react-datepicker,
 .DateRangePicker_picker {
   background: var(--ui-gray) !important;
-  border: 1px solid rgba(60, 75, 90, 0.3) !important;
-  border-radius: 7px !important;
+  border: 1px solid rgba(120, 120, 120, 0.25) !important;
+  border-radius: 5px !important;
   color: var(--text-primary-color) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
 }
 
 /* === react-dates calendar popup dark theme === */
@@ -288,20 +276,20 @@ textarea:focus {
 .CalendarDay {
   background: transparent !important;
   border: 0 !important;
-  border-radius: 4px !important;
+  border-radius: 3px !important;
   box-shadow: none !important;
   color: var(--text-primary-color) !important;
 }
 
 .CalendarDay:hover {
-  background: rgba(107, 139, 158, 0.15) !important;
+  background: rgba(200, 200, 200, 0.1) !important;
   color: var(--text-color-active) !important;
 }
 
 .CalendarDay__selected,
 .CalendarDay__selected_span,
 .CalendarDay__hovered_span {
-  background: var(--accent-teal) !important;
+  background: #555 !important;
   color: #fff !important;
 }
 
@@ -312,12 +300,12 @@ textarea:focus {
 .DayPickerNavigation_button {
   background: transparent !important;
   border: none !important;
-  border-radius: 4px !important;
+  border-radius: 3px !important;
   box-shadow: none !important;
 }
 
 .DayPickerNavigation_button:hover {
-  background: rgba(107, 139, 158, 0.15) !important;
+  background: rgba(200, 200, 200, 0.1) !important;
 }
 
 .DayPickerNavigation_svg__horizontal {
@@ -326,14 +314,14 @@ textarea:focus {
 
 .PresetDateRangePicker_button {
   background: transparent !important;
-  border: 1px solid rgba(60, 75, 90, 0.2) !important;
-  border-radius: 4px !important;
+  border: 1px solid rgba(120, 120, 120, 0.18) !important;
+  border-radius: 3px !important;
   box-shadow: none !important;
   color: var(--text-primary-color) !important;
 }
 
 .PresetDateRangePicker_button:hover {
-  background: rgba(107, 139, 158, 0.15) !important;
+  background: rgba(200, 200, 200, 0.1) !important;
   color: var(--text-color-active) !important;
 }
 
@@ -345,11 +333,9 @@ textarea:focus {
 .DateRangePicker_select {
   background: var(--input-background-color) !important;
   color: var(--text-primary-color) !important;
-  border: 1px solid rgba(60, 75, 90, 0.25) !important;
+  border: 1px solid rgba(120, 120, 120, 0.2) !important;
 }
 
-/* Collapse the inline DateRangePicker control into a single clean box
-   (the broad [class*="DateRange"] rules above otherwise border every nested part) */
 .DateRangePicker {
   border: none !important;
   background: transparent !important;
@@ -358,9 +344,9 @@ textarea:focus {
 }
 
 .DateRangePickerInput {
-  border: 1px solid rgba(60, 75, 90, 0.25) !important;
+  border: 1px solid rgba(120, 120, 120, 0.2) !important;
   background: var(--input-background-color) !important;
-  border-radius: 5px !important;
+  border-radius: 4px !important;
   box-shadow: none !important;
 }
 
@@ -391,7 +377,7 @@ textarea:focus {
 [class*="calendar"] [class*="header"],
 [class*="Calendar"] [class*="header"] {
   background: var(--ui-gray-dark) !important;
-  border-bottom: 1px solid rgba(60, 75, 90, 0.15) !important;
+  border-bottom: 1px solid rgba(120, 120, 120, 0.12) !important;
   color: var(--text-primary-color) !important;
 }
 
@@ -424,7 +410,7 @@ textarea:focus {
 [class*="DatePicker"] [class*="day"]:hover,
 [class*="calendar"] [class*="Day"]:hover,
 [class*="Calendar"] [class*="Day"]:hover {
-  background: rgba(107, 139, 158, 0.15) !important;
+  background: rgba(200, 200, 200, 0.1) !important;
   color: var(--text-color-active) !important;
 }
 
@@ -438,7 +424,7 @@ textarea:focus {
 [class*="Calendar"] [class*="selected"],
 [class*="calendar"] [class*="active"],
 [class*="Calendar"] [class*="active"] {
-  background: var(--accent-teal) !important;
+  background: #555 !important;
   color: #fff !important;
 }
 
@@ -462,8 +448,8 @@ textarea:focus {
 [class*="DatePicker"] input {
   background: var(--input-background-color) !important;
   color: var(--text-primary-color) !important;
-  border: 1px solid rgba(60, 75, 90, 0.25) !important;
-  border-radius: 5px !important;
+  border: 1px solid rgba(120, 120, 120, 0.2) !important;
+  border-radius: 4px !important;
 }
 
 /* Native date/time inputs in dark mode */
@@ -474,7 +460,7 @@ input[type="datetime-local"] {
   color-scheme: dark !important;
 }
 
-/* Force dark bg on any popup/dropdown that appears white */
+/* Force dark bg on any popup/dropdown */
 [class*="popup"],
 [class*="Popup"],
 [class*="overlay"],
@@ -483,7 +469,7 @@ input[type="datetime-local"] {
 [class*="Dropdown"] {
   background: var(--ui-gray) !important;
   color: var(--text-primary-color) !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
 }
 
 [class*="popup"] *,
@@ -517,7 +503,7 @@ div[style*="background-color: #fff"] {
 [class*="Dropdown"],
 [class*="datepicker"],
 [class*="DatePicker"] {
-  border-color: rgba(60, 75, 90, 0.2) !important;
+  border-color: rgba(120, 120, 120, 0.18) !important;
   outline: none !important;
 }
 
@@ -526,10 +512,10 @@ div[style*="border-color: rgb(255, 255, 255)"],
 div[style*="border: 1px solid rgb(255"],
 input[style*="border-color: rgb(255, 255, 255)"],
 input[style*="border: 1px solid rgb(255"] {
-  border-color: rgba(60, 75, 90, 0.2) !important;
+  border-color: rgba(120, 120, 120, 0.18) !important;
 }
 
-/* Show rows per page dropdown — match main background */
+/* Rows per page dropdown */
 [class*="rowsPerPage"],
 [class*="RowsPerPage"],
 [class*="rows-selector"],
@@ -542,7 +528,7 @@ select[id*="rows"],
 select[class*="rows"] {
   background: var(--ui-gray-dark) !important;
   color: var(--text-primary-color) !important;
-  border-color: rgba(60, 75, 90, 0.25) !important;
+  border-color: rgba(120, 120, 120, 0.2) !important;
 }
 
 [class*="rowsPerPage"] option,
@@ -554,7 +540,7 @@ select[class*="rows"] option {
   color: var(--text-primary-color) !important;
 }
 
-/* Study list item font size — match the rest of the UI */
+/* Study list item font size */
 .studyItemBox,
 .tableListRow,
 .TableListRow,
@@ -566,8 +552,8 @@ select[class*="rows"] option {
 
 /* Study list item polish */
 .studyItemBox .studyModality {
-  color: var(--brand-gold) !important;
-  background: rgba(196, 155, 94, 0.08) !important;
+  color: var(--text-primary-color) !important;
+  background: rgba(200, 200, 200, 0.06) !important;
   font-weight: 500 !important;
   letter-spacing: 0.03em !important;
 }
@@ -619,10 +605,10 @@ div:has(+ [id*="options"]) {
   color: var(--text-color-active) !important;
 }
 
-/* Subtle color accents for different sections */
+/* Patient MRN */
 .HeaderPatientInfo .mrn,
 .header-patient-info .mrn {
-  color: var(--accent-teal) !important;
+  color: var(--text-secondary-color) !important;
 }
 
 /* Date text */
@@ -631,9 +617,16 @@ div:has(+ [id*="options"]) {
   color: var(--text-secondary-color) !important;
 }
 
-/* Brand-level polish for series thumbnails */
+/* Series thumbnails */
 .thumbnailList .series-description,
 .ThumbnailList .series-description {
   color: var(--text-primary-color) !important;
   font-weight: 500 !important;
+}
+
+/* "No matching results" text readability */
+.study-list-container .notFound,
+.notFound {
+  color: var(--text-primary-color) !important;
+  font-weight: 400 !important;
 }
