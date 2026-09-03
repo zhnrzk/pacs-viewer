@@ -58,41 +58,60 @@ Open =http://localhost:3001=, fill in the configuration form, and click
 =start.sh= starts the services on the host.
 
 - Viewer: =http://server-ip:3000=
-- DICOM admin UI: =http://server-ip:8041/apps=
+- DICOM admin UI: =http://server-ip:3000/apps= (proxied via the viewer)
+  or directly on the host: =http://server-ip:8041/apps=
 - Default login: =admin= / =admin.1234= (configurable in the wizard)
 
 ** Architecture
 
-```
-Browser (port 3000)
-    │
-    ▼
-┌───────────────────────────┐
-│  web viewer (nginx)       │
-│  /            → viewer UI │
-│  /api/*       → proxy API │  ← auto-injects credentials
-│  /apps/*      → admin UI  │
-└───────────┬───────────────┘
-            │   Docker network: pacs
-            ▼
-┌───────────────────────────┐
-│  DICOM server (port 8041) │
-│  - stores DICOM images    │
-│  - DICOMweb / REST API    │
-│  - ingest automation      │
-└───────────┬───────────────┘
-            │  port 104 (DICOM protocol)
-       External PACS / modalities / import scripts
-```
+#+begin_example
+                        LAN clients / browser
+                                 |
+                                 v    port 3000 (public entry point)
+   +------------------------------------------------------------+
+   |  pacs-viewer  (nginx + OHIF)                                |
+   |    /                 -> branded viewer UI                  |
+   |    /api/*            -> Orthanc REST / DICOMweb            |
+   |    /apps/*           -> Orthanc admin UI                   |
+   +-------------------------+----------------------------------+
+                             |  Docker network: pacs
+                             v
+   +------------------------------------------------------------+
+   |  pacs-server  (Orthanc)                                     |
+   |    - DICOM storage + index           (./data)              |
+   |    - DICOMweb / REST API  port 8041 (host + viewer proxy)  |
+   |    - Orthanc Explorer      (/apps)                         |
+   +-------------------------+----------------------------------+
+                             |  port 104 (DICOM protocol)
+                             v
+              External PACS / modalities / import scripts
+#+end_example
 
-The reverse proxy inside the viewer container serves the branded UI at the
-root, proxies all =/api/*= and =/apps/*= requests to the DICOM server (injecting
-credentials so the browser never prompts), and proxies =/apps/*= to its admin UI.
+Two containers are started on the shared =pacs= Docker network. The
+=pacs-server= container runs Orthanc, which exposes two entry points:
+
+- =104= — the native DICOM protocol, used to receive studies from external
+  PACS/modalities and to query/retrieve.
+- =8041= — the Orthanc HTTP interface (REST API, DICOMweb, and the Orthanc
+  Explorer admin UI).
+
+The =pacs-viewer= container serves the branded OHIF web viewer at the root of
+port =3000= (nginx). The same nginx instance acts as a reverse proxy to Orthanc,
+injecting a Basic auth header so the browser never prompts:
+
+- =/api/*= proxies to =http://pacs-server:8041= (the full Orthanc REST API and
+  DICOMweb endpoints, e.g. =/api/studies=).
+- =/apps/*= proxies the Orthanc Explorer admin UI under the same URL.
+
+Both Orthanc HTTP (=8041=) and DICOM (=104=) are published on the host, so the
+full REST/admin interface is reachable from the LAN either directly on
+=8041= or through the viewer proxy on =:3000/apps=.
 
 ** Services
 
 - =pacs-viewer= — web viewer (nginx + reverse proxy), port =3000=.
-- =pacs-server= — DICOM server, ports =8041= (HTTP) and =104= (DICOM).
+- =pacs-server= — DICOM server, port =104= (DICOM) and =8041= (HTTP/REST)
+  published on the host; both containers share the =pacs= network.
 
 Both run on the shared =pacs= Docker network and store data persistently in the
 =data/= directory (DICOM images + SQLite index).
@@ -108,7 +127,8 @@ and the Docker network name.
 1. **Upload from the viewer** =http://server-ip:3000=.
 2. **Send from an existing PACS / modality** — AE Title =PACS=, port =104=,
    IP =your-server-ip=.
-3. **Bulk import with the Python script**:
+3. **Bulk import with the Python script** (the HTTP API is reachable on the
+   host at port =8041=):
    #+begin_src bash
    python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir
    python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir admin admin.1234

@@ -28,7 +28,6 @@ services:
       - ./assets/custom.css:/usr/share/nginx/html/custom.css:ro
       - ./index.html:/usr/share/nginx/html/index.html:ro
       - ./assets/favicon.svg:/usr/share/nginx/html/favicon.svg:ro
-      - ./assets/Hospital-Labuan.jpg:/usr/share/nginx/html/Hospital-Labuan.jpg:ro
     restart: always
     networks:
       - pacs
