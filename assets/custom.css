@@ -1,7 +1,81 @@
-/* === PACS Theme — Neutral Monochrome === */
+/* ==========================================================================
+   PACS viewer — custom theme (OHIF v2 study list + viewer)
+   --------------------------------------------------------------------------
+   1. Tokens
+   2. Base + app shell (reserved footer, scrollbars)
+   3. Top bar
+   4. Study list (header bar, sticky filters, rows, empty state)
+   5. Pagination
+   6. Shared UI (inputs, buttons, menus, modals, snackbar)
+   7. Viewer (toolbar, side panel, viewport, thumbnails, measurements)
+   8. Date pickers
+   9. Narrow screens
+   ========================================================================== */
 
+/* ============================== 1. Tokens ============================== */
+:root {
+  /* Theme variables the bundled OHIF styles read from. */
+  --default-color: #6b8b9e;
+  --hover-color: #9eb0c2;
+  --active-color: #7e9eb6;
+  --ui-border-color: rgba(60, 75, 90, 0.3);
+  --ui-border-color-dark: rgba(40, 55, 68, 0.2);
+  --ui-border-color-active: #6b8b9e;
+  --primary-background-color: #060a0f;
+  --box-background-color: #0e141d;
+  --ui-sky-blue: #6b8b9e;
+  --ui-gray-light: #1e2834;
+  --ui-gray: #121820;
+  --ui-gray-dark: #0c1118;
+  --ui-gray-darker: #090d13;
+  --ui-gray-darkest: #05080d;
+  --text-color-active: #dce2ea;
+  --text-primary-color: #bcc5d1;
+  --text-secondary-color: #6b7a8f;
+  --text-disabled-color: #3e4957;
+  --input-background-color: #0e141d;
+  --input-placeholder-color: #495668;
+  --table-hover-color: #111720;
+  --table-text-primary-color: #c4ccd7;
+  --table-text-secondary-color: #7a8799;
+  --large-numbers-color: #8aa4b5;
+  --state-error: #d18b8e;
+  --state-error-border: #9e4448;
+  --state-error-text: #d49396;
+  --datePicker-input-background: #0e141d;
+  --series-count-background-color: #1e2834;
+  --top-bar-height: 42px;
+  --brand-gold: #c49b5e;
+  --brand-gold-dim: #8b6f44;
+  --accent-teal: #5c8a9e;
+  --accent-cool: #5f7e94;
+
+  /* Layout + surface tokens used by the rules below. */
+  --shell-pad: clamp(16px, 4vw, 56px);
+  --shell-bottom: 30px;      /* height reserved for the fixed footer bar   */
+  --sbw: 6px;                /* measured scrollbar gutter (custom.js)         */
+  --nav-h: 92px;             /* height of the study-list top bar           */
+  --list-header-h: 62px;     /* height of the "StudyList" bar              */
+  --bar-bg: #0a0f16;
+  --panel-bg: #0e141d;
+  --line-1: rgba(124, 152, 176, 0.10);
+  --line-2: rgba(124, 152, 176, 0.18);
+  --ink-1: #dbe4ee;
+  --ink-2: #93a3b6;
+  --ink-3: #66788d;
+  --teal: #5c8a9e;
+
+  /* Native widgets follow the dark theme. Without this, Firefox paints its own
+     light scrollbars and form-control chrome, which reads as a white margin
+     along the edge of the list. */
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(96, 124, 148, 0.45) transparent;
+}
+
+/* =================== 2. Base + app shell =================== */
 *, *::before, *::after {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'Consolas', 'DejaVu Sans Mono', monospace !important;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
 }
 
 [class*="icon-"],
@@ -11,50 +85,114 @@ svg,
   font-family: inherit !important;
 }
 
-:root {
-  --default-color: #888;
-  --hover-color: #999;
-  --active-color: #aaa;
-  --ui-border-color: rgba(120, 120, 120, 0.25);
-  --ui-border-color-dark: rgba(80, 80, 80, 0.2);
-  --ui-border-color-active: #888;
-  --primary-background-color: #0a0a0a;
-  --box-background-color: #111;
-  --ui-sky-blue: #888;
-  --ui-gray-light: #1a1a1a;
-  --ui-gray: #141414;
-  --ui-gray-dark: #0e0e0e;
-  --ui-gray-darker: #0b0b0b;
-  --ui-gray-darkest: #060606;
-  --text-color-active: #e0e0e0;
-  --text-primary-color: #c8c8c8;
-  --text-secondary-color: #777;
-  --text-disabled-color: #444;
-  --input-background-color: #111;
-  --input-placeholder-color: #555;
-  --table-hover-color: #161616;
-  --table-text-primary-color: #c0c0c0;
-  --table-text-secondary-color: #777;
-  --large-numbers-color: #999;
-  --state-error: #b06060;
-  --state-error-border: #804040;
-  --state-error-text: #c07070;
-  --datePicker-input-background: #111;
-  --series-count-background-color: #1a1a1a;
-  --top-bar-height: 42px;
+html,
+body {
+  height: 100%;
 }
 
-/* Header */
-.NavBar {
+/* Body is a fixed shell: #root fills the space above the footer bar.
+   Nothing ever scrolls behind the footer or gets clipped by it. */
+body {
   display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: #0c0c0c !important;
-  border-bottom: 1px solid rgba(120, 120, 120, 0.15) !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  background: #060a0f;
+}
+
+#root {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto !important;
+  overflow: hidden;
+}
+
+body > footer,
+.pacs-footer {
+  position: static !important;
+  flex: 0 0 var(--shell-bottom) !important;
+  height: var(--shell-bottom) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 !important;
+  padding: 0 16px !important;
+  background: #05080d !important;
+  border-top: 1px solid var(--line-1) !important;
+  color: #5f6f83 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase;
+  white-space: nowrap;
+  z-index: auto !important;
+}
+
+/* Scrollbars: standard properties (see :root) win in Firefox and Chromium 121+;
+   the -webkit- rules below are the fallback for older WebKit/Blink builds. */
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(90, 116, 138, 0.35) !important;
+  border-radius: 999px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(110, 140, 165, 0.55) !important;
+}
+
+/* ========================= 3. Top bar ========================= */
+/* The study-list header is laid out with flex so the brand and the menu
+   share one baseline instead of floating independently. */
+.entry-header.header-big {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-h) !important;
+  padding: 0 var(--shell-pad) !important;
+  background: #080c12 !important;
+  border-bottom: 1px solid var(--line-1);
+}
+
+.entry-header.header-big .header-brand {
+  float: none !important;
+  height: auto !important;
+  margin: 0 !important;
+}
+
+.entry-header.header-big .header-menu {
+  float: none !important;
+  display: flex !important;
+  align-items: center;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.header-brand,
+.NavBar,
+.header-menu,
+.entry-header {
+  align-items: center;
+}
+
+.NavBar {
+  background: rgba(6, 10, 15, 0.96) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line-1) !important;
 }
 
 .NavBar * {
-  font-size: 17px !important;
+  font-size: 15px !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
 }
@@ -64,141 +202,607 @@ svg,
   letter-spacing: 0.08em !important;
 }
 
-/* Study list background */
-.studyBrowser .tableList,
-.StudyBrowser .tableList,
-.study-browser {
+.NavBar .custom-brand-logo svg {
+  display: block;
+  height: 30px;
+  width: auto;
+}
+
+.NavBar .custom-brand-logo svg text {
+  font-size: 20px !important;
+}
+
+/* Web viewer / study list link */
+.NavBar .custom-local-link,
+.entry-header .custom-local-link,
+.header-menu .custom-local-link,
+.custom-local-link-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  margin: 0 0 0 16px;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #7d8da0 !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.NavBar .custom-local-link:hover,
+.entry-header .custom-local-link:hover,
+.header-menu .custom-local-link:hover,
+.custom-local-link-fallback:hover {
+  background: transparent !important;
+  color: var(--brand-gold) !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.custom-local-link-fallback {
+  position: fixed;
+  left: var(--shell-pad);
+  bottom: calc(var(--shell-bottom) + 12px);
+  z-index: 10000;
+  display: none;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.custom-local-link-fallback:hover {
+  opacity: 1;
+}
+
+/* ======================= 4. Study list ======================= */
+.study-list-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: var(--list-header-h) !important;
+  margin: 0 !important;
+  padding: 0 calc(var(--shell-pad) + var(--sbw)) 0 var(--shell-pad) !important;
+  line-height: 1 !important;
+  background: var(--bar-bg) !important;
+  border-bottom: 1px solid var(--line-1);
+}
+
+.study-list-header .header {
+  height: auto !important;
+  margin: 0;
+  line-height: 1 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase;
+  color: #a8b6c6 !important;
+}
+
+.study-list-header .actions {
+  display: flex !important;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 14px;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+.study-list-header .study-count {
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  color: var(--ink-1) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.study-list-header .addNewStudy {
+  margin: 0 !important;
+}
+
+.study-list-header .addNewStudy label {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--ink-2) !important;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.study-list-header .addNewStudy label:hover {
+  background: rgba(92, 138, 158, 0.16);
+  color: var(--ink-1) !important;
+}
+
+.study-list-header .addNewStudy label svg {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+/* The list itself is the scrolling pane: the filter row sticks to its top,
+   the pagination bar sticks to its bottom, and the whole thing lines up with
+   the bars above it. --nav-h + --list-header-h must match the bar heights. */
+.study-list-container {
+  top: calc(var(--nav-h) + var(--list-header-h)) !important;
+  bottom: var(--shell-bottom) !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 var(--shell-pad) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+}
+
+.study-list-container > table.table {
+  flex: 0 0 auto;
+  margin: 0 !important;
+  border-collapse: collapse;
+}
+
+/* Replaces the full-bleed band drawn by .table-head-background */
+.table-head-background,
+.table-head-background::before,
+.table-head-background::after {
+  display: none !important;
+}
+
+/* ---------- sticky filter row ---------- */
+.study-list-container > table.table > thead > tr > th {
+  width: auto !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 6;
+  padding: 0 !important;
+  background: var(--bar-bg) !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--line-2) !important;
+  box-shadow: 0 10px 18px -14px rgba(0, 0, 0, 0.9);
+  text-align: left;
+}
+
+.study-list-container .filters label {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 15px 8px 9px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase;
+  color: #7b8b9f !important;
+  cursor: pointer;
+  user-select: none;
+}
+
+.study-list-container .filters label:hover {
+  color: var(--ink-1) !important;
+}
+
+.study-list-container .filters label svg {
+  width: 9px !important;
+  height: 9px !important;
+  flex: 0 0 auto;
+  opacity: 0.45;
+}
+
+.study-list-container .filters label:hover svg {
+  opacity: 0.9;
+}
+
+.study-list-container > table.table > thead > tr > th > input {
+  display: block;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 34px !important;
+  margin: 0 0 12px 0 !important;
+  padding: 0 30px 0 10px !important;
+  background-color: #131c27 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23596880' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='4.6'/%3E%3Cpath d='M10.5 10.5 14 14'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 9px center !important;
+  background-size: 12px 12px !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px !important;
+  color: var(--ink-1) !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.02em;
+  caret-color: var(--teal);
+  cursor: text !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+/* 12px gutter between filter boxes, flush on the last column (tagged by
+   custom.js because the column set changes with the viewport) */
+.study-list-container > table.table > thead > tr > th > input {
+  width: calc(100% - 12px) !important;
+}
+
+.study-list-container > table.table > thead > tr > th.pacs-last > input {
+  width: 100% !important;
+}
+
+/* The study-date range box is a div, not an input, so it needs the same 12px
+   gutter explicitly - otherwise it runs into the next column's field. */
+.study-list-container > table.table > thead > tr > th > .DateRangePicker {
+  width: calc(100% - 12px) !important;
+}
+
+.study-list-container > table.table > thead > tr > th.pacs-last > .DateRangePicker {
+  width: 100% !important;
+}
+
+.study-list-container > table.table > thead > tr > th > input::placeholder {
+  color: #4d5b6e !important;
+  letter-spacing: 0.03em;
+}
+
+.study-list-container > table.table > thead > tr > th > input:hover {
+  background-color: #17222f !important;
+}
+
+.study-list-container > table.table > thead > tr > th > input:focus {
+  border-color: rgba(92, 138, 158, 0.85) !important;
+  background-color: #17222f !important;
+  box-shadow: 0 0 0 3px rgba(92, 138, 158, 0.15) !important;
+  outline: 0 !important;
+}
+
+/* ---------- rows ---------- */
+.study-list-container > table.table > tbody > tr > td {
+  padding: 12px 8px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line-1) !important;
+  vertical-align: middle;
   background: transparent !important;
 }
 
-/* Viewport */
-.viewport-element,
-.Viewport {
-  background: #020202 !important;
+.study-list-container > table.table > tbody > tr:last-child > td {
+  border-bottom: 0 !important;
 }
 
-/* Toolbar */
-.toolbar-section,
-.ToolbarSection {
-  background: rgba(10, 10, 10, 0.92) !important;
+table.table--striped > tbody tr:nth-child(even) {
+  background-color: rgba(124, 152, 176, 0.035) !important;
+}
+
+table.table--hoverable > tbody tr:hover,
+table.table--hoverable > tbody tr:active,
+table.table--hoverable > tbody tr.active {
+  background-color: rgba(92, 138, 158, 0.09) !important;
+}
+
+.study-list-container tbody tr {
+  cursor: pointer;
+}
+
+/* patient name + MRN */
+.study-list-container tbody td:first-child {
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0.01em;
+  color: var(--ink-1) !important;
+}
+
+.study-list-container tbody td:first-child > div {
+  margin-top: 3px;
+  font-size: 10.5px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.06em;
+  color: #6b7d92 !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* modality badge + accession, flush with the right handle of the row */
+.study-list-container tbody td:nth-child(2) > div {
+  align-items: flex-start;
+}
+
+.study-list-container tbody td:nth-child(2) > div > div:last-child {
+  width: auto !important;
+  max-width: none !important;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.study-list-container .modalities {
+  display: inline-block;
+  min-height: 0 !important;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(196, 155, 94, 0.10);
+  color: var(--brand-gold) !important;
+  font-size: 9.5px !important;
+  font-weight: 600 !important;
+  line-height: 16px !important;
+  letter-spacing: 0.1em !important;
+}
+
+.study-list-container tbody td:nth-child(2) > div > div:last-child > div:last-child {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: nowrap;
+  font-size: 10.5px !important;
+  letter-spacing: 0.02em;
+  color: #7e8ea1 !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- study date cells (both layouts) ---------- */
+.study-list-container table:has(> thead > tr > th:nth-child(6)) tbody td:nth-child(4),
+.study-list-container table:has(> thead > tr > th:nth-child(3)):not(:has(> thead > tr > th:nth-child(4))) tbody td:nth-child(3) {
+  font-size: 11px !important;
+  letter-spacing: 0.02em;
+  color: #a9b7c7 !important;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---------- 3-column layout ---------- */
+/* Patient Name / MRN | Modality / Accession | Study Date.
+   A fixed grid keeps the date picker from inflating its column; the
+   percentage widths must add up to 100%. */
+.study-list-container table:has(> thead > tr > th:nth-child(3)):not(:has(> thead > tr > th:nth-child(4))) {
+  table-layout: fixed !important;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(3)):not(:has(> thead > tr > th:nth-child(4))) col {
+  width: auto !important;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(3)):not(:has(> thead > tr > th:nth-child(4))) > thead th:nth-child(1) { width: 34% !important; }
+.study-list-container table:has(> thead > tr > th:nth-child(3)):not(:has(> thead > tr > th:nth-child(4))) > thead th:nth-child(2) { width: 42% !important; }
+.study-list-container table:has(> thead > tr > th:nth-child(3)):not(:has(> thead > tr > th:nth-child(4))) > thead th:nth-child(3) { width: 24% !important; }
+
+/* ---------- 6-column layout ---------- */
+/* Patient Name | MRN | Accession # | Study Date | Modality | Description */
+.study-list-container table:has(> thead > tr > th:nth-child(6)) {
+  table-layout: fixed !important;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(6)) col {
+  width: auto !important;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(6)) > thead th:nth-child(1) { width: 30% !important; }
+.study-list-container table:has(> thead > tr > th:nth-child(6)) > thead th:nth-child(2) { width: 13% !important; }
+.study-list-container table:has(> thead > tr > th:nth-child(6)) > thead th:nth-child(3) { width: 16% !important; }
+.study-list-container table:has(> thead > tr > th:nth-child(6)) > thead th:nth-child(4) { width: 13% !important; }
+.study-list-container table:has(> thead > tr > th:nth-child(6)) > thead th:nth-child(5) { width: 9% !important; }
+.study-list-container table:has(> thead > tr > th:nth-child(6)) > thead th:nth-child(6) { width: 19% !important; }
+
+.study-list-container table:has(> thead > tr > th:nth-child(6)) tbody td:nth-child(1) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(6)) tbody td:nth-child(2) {
+  font-size: 11px !important;
+  letter-spacing: 0.04em;
+  color: #8b9bb0 !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(6)) tbody td:nth-child(3) {
+  font-size: 11px !important;
+  letter-spacing: 0.02em;
+  color: #a9b7c7 !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(6)) tbody td:nth-child(5) {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  color: var(--brand-gold) !important;
+}
+
+.study-list-container table:has(> thead > tr > th:nth-child(6)) tbody td:nth-child(6) {
+  font-size: 11px !important;
+  color: #7e8ea1 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* empty / loading state fills the free space instead of hugging the table */
+.study-list-container .notFound,
+.study-list-container .loading-text {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase;
+  color: #5d6d80 !important;
+}
+
+/* ======================== 5. Pagination ======================== */
+.pagination-area {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 5;
+  flex: 0 0 auto;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px;
+  height: 54px !important;
+  margin: 0 !important;
+  margin-top: auto !important;
+  padding: 0 !important;
+  background: var(--bar-bg) !important;
+  border-top: 1px solid var(--line-2) !important;
+  font-size: 11px !important;
+  color: #7d8da0 !important;
+}
+
+.pagination-area .rows-dropdown {
+  width: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.pagination-area .form-inline,
+.pagination-area .form-group,
+.pagination-area .rows-per-page {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  height: auto !important;
+  margin: 0 !important;
+}
+
+.pagination-area select {
+  height: 28px !important;
+  margin: 0 !important;
+  padding: 0 24px 0 9px !important;
+  background-color: #131c27 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238e9eb1' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='m4 6.5 4 4 4-4'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 8px center !important;
+  background-size: 10px 10px !important;
+  border: 1px solid transparent !important;
   border-radius: 5px !important;
-  border: 1px solid rgba(120, 120, 120, 0.15) !important;
-  padding: 4px 6px !important;
+  color: var(--ink-1) !important;
+  font-size: 11px !important;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
 }
 
-.toolbar-button,
-.ToolbarButton {
-  border-radius: 4px !important;
-  color: var(--text-secondary-color) !important;
-  transition: background 0.12s ease, color 0.12s ease !important;
+.pagination-area select:hover {
+  background-color: #17222f !important;
 }
 
-.toolbar-button:hover,
-.ToolbarButton:hover {
-  background: rgba(200, 200, 200, 0.06) !important;
-  color: var(--text-color-active) !important;
+.pagination-area select option {
+  background: var(--panel-bg) !important;
+  color: var(--ink-1) !important;
 }
 
-/* Buttons */
+.pagination-area .pagination-buttons {
+  width: auto !important;
+  margin-left: auto;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+.pagination-area .page-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.pagination-area ul.pagination-control {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none;
+}
+
+.pagination-area ul.pagination-control li {
+  display: flex !important;
+  padding: 0 !important;
+}
+
+.pagination-area .btn.page-link,
+.pagination-area .page-buttons button {
+  height: 30px !important;
+  padding: 0 13px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px !important;
+  color: var(--ink-2) !important;
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+  line-height: 28px !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.pagination-area .btn.page-link:hover:enabled,
+.pagination-area .page-buttons button:hover:enabled {
+  color: var(--ink-1) !important;
+  background: rgba(92, 138, 158, 0.16) !important;
+}
+
+.pagination-area .btn.page-link:disabled,
+.pagination-area .page-buttons button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* ======================= 6. Shared UI ======================= */
 .btn,
 .Button {
-  border-radius: 4px !important;
+  border-radius: 5px !important;
   font-weight: 500 !important;
   letter-spacing: 0.02em !important;
-  transition: all 0.12s ease !important;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
 }
 
-/* Side panel */
-.sidepanel,
-.SidePanel {
-  background: #0e0e0e !important;
-  border-left: 1px solid rgba(120, 120, 120, 0.12) !important;
-}
-
-/* Table rows */
-.tableList .tableListRow,
-.TableList .TableListRow {
-  border-bottom: 1px solid rgba(120, 120, 120, 0.08) !important;
-  transition: background 0.1s ease !important;
-}
-
-.tableList .tableListRow:hover,
-.TableList .TableListRow:hover {
-  background: rgba(200, 200, 200, 0.03) !important;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(120, 120, 120, 0.3);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(150, 150, 150, 0.45);
-}
-
-/* Smooth scrolling */
-* {
-  scroll-behavior: smooth;
-}
-
-/* Inputs */
 input,
 select,
 textarea,
 .Input,
 .Select {
-  border-radius: 4px !important;
-  border-color: rgba(120, 120, 120, 0.2) !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border-radius: 5px !important;
+  border-color: var(--line-2) !important;
   background: var(--input-background-color) !important;
   color: var(--text-primary-color) !important;
-  transition: border-color 0.12s ease !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: #777 !important;
-  box-shadow: none !important;
+  border-color: var(--accent-teal) !important;
+  box-shadow: 0 0 0 2px rgba(92, 138, 158, 0.12) !important;
   outline: none !important;
 }
 
-/* Thumbnail images */
-.image-thumbnail,
-.ImageThumbnail {
-  border-radius: 4px !important;
-  overflow: hidden !important;
-}
-
-/* Snackbar */
-.sb-snackbar,
-.Snackbar {
-  border-radius: 5px !important;
-  font-weight: 500 !important;
-}
-
-/* Dropdown menus */
 .dropdown-menu,
 .DropdownMenu {
-  background: #0e0e0e !important;
-  border: 1px solid rgba(120, 120, 120, 0.18) !important;
-  border-radius: 5px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5) !important;
+  background: rgba(12, 17, 24, 0.98) !important;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid var(--line-2) !important;
+  border-radius: 7px !important;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.6) !important;
   overflow: hidden !important;
 }
 
 .dropdown-menu .dropdown-item,
 .DropdownMenu .DropdownItem {
-  border-radius: 3px !important;
+  border-radius: 4px !important;
   margin: 2px 4px !important;
   color: var(--text-secondary-color) !important;
   transition: background 0.1s ease, color 0.1s ease !important;
@@ -206,316 +810,24 @@ textarea:focus {
 
 .dropdown-menu .dropdown-item:hover,
 .DropdownMenu .DropdownItem:hover {
-  background: rgba(200, 200, 200, 0.06) !important;
+  background: rgba(107, 139, 158, 0.08) !important;
   color: var(--text-color-active) !important;
 }
 
-/* Patient info */
-.HeaderPatientInfo,
-.header-patient-info {
-  font-size: 12px !important;
-  color: var(--text-secondary-color) !important;
-}
-
-.HeaderPatientInfo .patientName,
-.header-patient-info .patientName {
-  color: var(--text-color-active) !important;
-  font-weight: 500 !important;
-}
-
-/* Measurement table */
-.measurement-table,
-.MeasurementTable {
-  border-spacing: 0 !important;
-}
-
-/* Modals */
 .modal-content,
 .ModalContent {
   background: var(--ui-gray-darker) !important;
-  border: 1px solid rgba(120, 120, 120, 0.2) !important;
-  border-radius: 8px !important;
+  border: 1px solid var(--line-2) !important;
+  border-radius: 10px !important;
 }
 
-/* Study list title row */
-.tableListHeader,
-.TableListHeader {
-  background: transparent !important;
-  padding: 12px 8px !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  font-size: 10px !important;
-  letter-spacing: 0.08em !important;
-  color: var(--text-secondary-color) !important;
+.sb-snackbar,
+.Snackbar {
+  border-radius: 7px !important;
+  font-weight: 500 !important;
 }
 
-/* === Date picker dark mode === */
-.react-datepicker,
-.DateRangePicker_picker {
-  background: var(--ui-gray) !important;
-  border: 1px solid rgba(120, 120, 120, 0.25) !important;
-  border-radius: 5px !important;
-  color: var(--text-primary-color) !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
-}
-
-/* === react-dates calendar popup dark theme === */
-.DayPicker,
-.CalendarMonthGrid,
-.CalendarMonth,
-.CalendarMonth_caption,
-.CalendarMonth_table,
-.PresetDateRangePicker_panel,
-.DateInput_fang {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-
-.CalendarDay {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 3px !important;
-  box-shadow: none !important;
-  color: var(--text-primary-color) !important;
-}
-
-.CalendarDay:hover {
-  background: rgba(200, 200, 200, 0.1) !important;
-  color: var(--text-color-active) !important;
-}
-
-.CalendarDay__selected,
-.CalendarDay__selected_span,
-.CalendarDay__hovered_span {
-  background: #555 !important;
-  color: #fff !important;
-}
-
-.CalendarDay__blocked_out_of_range {
-  color: var(--text-disabled-color) !important;
-}
-
-.DayPickerNavigation_button {
-  background: transparent !important;
-  border: none !important;
-  border-radius: 3px !important;
-  box-shadow: none !important;
-}
-
-.DayPickerNavigation_button:hover {
-  background: rgba(200, 200, 200, 0.1) !important;
-}
-
-.DayPickerNavigation_svg__horizontal {
-  fill: var(--text-secondary-color) !important;
-}
-
-.PresetDateRangePicker_button {
-  background: transparent !important;
-  border: 1px solid rgba(120, 120, 120, 0.18) !important;
-  border-radius: 3px !important;
-  box-shadow: none !important;
-  color: var(--text-primary-color) !important;
-}
-
-.PresetDateRangePicker_button:hover {
-  background: rgba(200, 200, 200, 0.1) !important;
-  color: var(--text-color-active) !important;
-}
-
-.DayPicker_weekHeader_li,
-.CalendarMonth_caption {
-  color: var(--text-secondary-color) !important;
-}
-
-.DateRangePicker_select {
-  background: var(--input-background-color) !important;
-  color: var(--text-primary-color) !important;
-  border: 1px solid rgba(120, 120, 120, 0.2) !important;
-}
-
-.DateRangePicker {
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-
-.DateRangePickerInput {
-  border: 1px solid rgba(120, 120, 120, 0.2) !important;
-  background: var(--input-background-color) !important;
-  border-radius: 4px !important;
-  box-shadow: none !important;
-}
-
-.DateRangePickerInput_arrow,
-.DateRangePickerInput_arrow_svg {
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-
-.DateRangePickerInput_arrow_svg {
-  fill: var(--text-secondary-color) !important;
-}
-
-.DateInput,
-.DateInput_input {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.react-datepicker__header,
-.DatePicker__header,
-.datepicker__header,
-[class*="datepicker"] [class*="header"],
-[class*="DatePicker"] [class*="header"],
-[class*="calendar"] [class*="header"],
-[class*="Calendar"] [class*="header"] {
-  background: var(--ui-gray-dark) !important;
-  border-bottom: 1px solid rgba(120, 120, 120, 0.12) !important;
-  color: var(--text-primary-color) !important;
-}
-
-.react-datepicker__current-month,
-.DatePicker__current-month,
-.datepicker__current-month,
-[class*="calendar"] [class*="month"],
-[class*="Calendar"] [class*="month"],
-[class*="calendar"] [class*="title"],
-[class*="Calendar"] [class*="title"],
-[class*="datepicker"] [class*="month"],
-[class*="DatePicker"] [class*="month"] {
-  color: var(--text-primary-color) !important;
-}
-
-.react-datepicker__day-name,
-.react-datepicker__day,
-.DatePicker__day-name,
-.DatePicker__day,
-.datepicker__day-name,
-.datepicker__day,
-[class*="datepicker"] [class*="day"],
-[class*="DatePicker"] [class*="day"],
-[class*="calendar"] [class*="Day"],
-[class*="Calendar"] [class*="Day"] {
-  color: var(--text-primary-color) !important;
-}
-
-.react-datepicker__day:hover,
-[class*="DatePicker"] [class*="day"]:hover,
-[class*="calendar"] [class*="Day"]:hover,
-[class*="Calendar"] [class*="Day"]:hover {
-  background: rgba(200, 200, 200, 0.1) !important;
-  color: var(--text-color-active) !important;
-}
-
-.react-datepicker__day--selected,
-.react-datepicker__day--keyboard-selected,
-.react-datepicker__day--in-range,
-.react-datepicker__day--in-selecting-range,
-[class*="DatePicker"] [class*="--selected"],
-[class*="DatePicker"] [class*="--in-range"],
-[class*="calendar"] [class*="selected"],
-[class*="Calendar"] [class*="selected"],
-[class*="calendar"] [class*="active"],
-[class*="Calendar"] [class*="active"] {
-  background: #555 !important;
-  color: #fff !important;
-}
-
-.react-datepicker__day--disabled,
-[class*="DatePicker"] [class*="--disabled"],
-[class*="calendar"] [class*="disabled"],
-[class*="Calendar"] [class*="disabled"] {
-  color: var(--text-disabled-color) !important;
-}
-
-.react-datepicker__navigation-icon::before,
-[class*="DatePicker"] [class*="navigation"]::before,
-[class*="calendar"] button::before,
-[class*="Calendar"] button::before {
-  border-color: var(--text-secondary-color) !important;
-}
-
-.react-datepicker__input-container input,
-.DatePicker__input input,
-[class*="datepicker"] input,
-[class*="DatePicker"] input {
-  background: var(--input-background-color) !important;
-  color: var(--text-primary-color) !important;
-  border: 1px solid rgba(120, 120, 120, 0.2) !important;
-  border-radius: 4px !important;
-}
-
-/* Native date/time inputs in dark mode */
-input[type="date"],
-input[type="month"],
-input[type="week"],
-input[type="datetime-local"] {
-  color-scheme: dark !important;
-}
-
-/* Force dark bg on any popup/dropdown */
-[class*="popup"],
-[class*="Popup"],
-[class*="overlay"],
-[class*="Overlay"],
-[class*="dropdown"],
-[class*="Dropdown"] {
-  background: var(--ui-gray) !important;
-  color: var(--text-primary-color) !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
-}
-
-[class*="popup"] *,
-[class*="Popup"] *,
-[class*="overlay"] *,
-[class*="Overlay"] *,
-[class*="dropdown"] *,
-[class*="Dropdown"] * {
-  color: var(--text-primary-color) !important;
-}
-
-/* Nuke any white background still showing */
-div[style*="background: rgb(255, 255, 255)"],
-div[style*="background:#fff"],
-div[style*="background: #fff"],
-div[style*="background:#ffffff"],
-div[style*="background: #ffffff"],
-div[style*="background-color: rgb(255, 255, 255)"],
-div[style*="background-color:#fff"],
-div[style*="background-color: #fff"] {
-  background: var(--ui-gray) !important;
-  background-color: var(--ui-gray) !important;
-}
-
-/* Eliminate white borders on popups/dropdowns */
-[class*="popup"],
-[class*="Popup"],
-[class*="overlay"],
-[class*="Overlay"],
-[class*="dropdown"],
-[class*="Dropdown"],
-[class*="datepicker"],
-[class*="DatePicker"] {
-  border-color: rgba(120, 120, 120, 0.18) !important;
-  outline: none !important;
-}
-
-/* Kill any remaining white borders */
-div[style*="border-color: rgb(255, 255, 255)"],
-div[style*="border: 1px solid rgb(255"],
-input[style*="border-color: rgb(255, 255, 255)"],
-input[style*="border: 1px solid rgb(255"] {
-  border-color: rgba(120, 120, 120, 0.18) !important;
-}
-
-/* Rows per page dropdown */
+/* Show N rows per page dropdown, wherever it is rendered */
 [class*="rowsPerPage"],
 [class*="RowsPerPage"],
 [class*="rows-selector"],
@@ -526,9 +838,9 @@ input[style*="border: 1px solid rgb(255"] {
 .tableFooter select,
 select[id*="rows"],
 select[class*="rows"] {
-  background: var(--ui-gray-dark) !important;
-  color: var(--text-primary-color) !important;
-  border-color: rgba(120, 120, 120, 0.2) !important;
+  background: #131c27 !important;
+  color: var(--ink-1) !important;
+  border-color: transparent !important;
 }
 
 [class*="rowsPerPage"] option,
@@ -540,7 +852,140 @@ select[class*="rows"] option {
   color: var(--text-primary-color) !important;
 }
 
-/* Study list item font size */
+/* Notification / investigational-use banners are not wanted */
+.notification-bar,
+.research-use,
+[class*="notification-bar"],
+[class*="research-use"] {
+  display: none !important;
+}
+
+/* Top-right session options menu is not wanted */
+#options,
+#options-settings-icon,
+[data-cy="options-menu"],
+[id*="options-settings"],
+.option-dropdown {
+  display: none !important;
+}
+
+/* ========================== 7. Viewer ========================== */
+.viewport-element,
+.Viewport {
+  background: #020408 !important;
+}
+
+.sidepanel,
+.SidePanel {
+  background: rgba(9, 13, 18, 0.98) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-left: 1px solid rgba(60, 75, 90, 0.15) !important;
+}
+
+/* Toolbar */
+.ToolbarRow {
+  background: #080b10 !important;
+  border-bottom: 1px solid var(--line-1);
+}
+
+.toolbar-button {
+  border-radius: 6px;
+  margin: 4px 2px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.toolbar-button:hover {
+  color: var(--ink-1) !important;
+  background: rgba(92, 138, 158, 0.10);
+}
+
+.toolbar-button.active,
+.toolbar-button:active {
+  color: #cfe0ee !important;
+  background: rgba(92, 138, 158, 0.16);
+}
+
+.toolbar-section,
+.ToolbarSection {
+  background: rgba(9, 13, 18, 0.88) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 7px !important;
+  border: 1px solid var(--line-2) !important;
+  padding: 4px 6px !important;
+}
+
+.toolbar-button .toolbar-button-label {
+  font-size: 10.5px !important;
+  letter-spacing: 0.04em;
+}
+
+/* Study browser panel */
+.study-browser {
+  background: #05080d !important;
+}
+
+/* The bundled CSS hides this scrollbar with a -webkit- pseudo-element only;
+   Firefox needs the standard property to match. */
+.study-browser .scrollable-study-thumbnails {
+  scrollbar-width: none;
+}
+
+.thumbnail .series-information .icon {
+  width: 13px !important;
+  min-width: 13px;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+
+.thumbnail .series-information .value {
+  width: calc(100% - 17px) !important;
+}
+
+.thumbnail .series-information {
+  gap: 6px;
+}
+
+.thumbnail .series-details {
+  margin-left: 0.6rem !important;
+  margin-right: 0.6rem !important;
+}
+
+.thumbnailList .series-description,
+.ThumbnailList .series-description {
+  color: var(--text-primary-color) !important;
+  font-weight: 500 !important;
+}
+
+.image-thumbnail,
+.ImageThumbnail {
+  border-radius: 5px !important;
+  overflow: hidden !important;
+}
+
+/* Primary action inside the measurements panel */
+.saveBtn {
+  height: 32px !important;
+  padding: 0 14px !important;
+  background: var(--accent-teal) !important;
+  border: 1px solid var(--accent-teal) !important;
+  border-radius: 6px !important;
+  color: #ffffff !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  line-height: 30px !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.saveBtn:hover:enabled {
+  background: #6b9ab0 !important;
+  border-color: #6b9ab0 !important;
+}
+
+/* Study box in the series panel */
 .studyItemBox,
 .tableListRow,
 .TableListRow,
@@ -550,10 +995,9 @@ select[class*="rows"] option {
   font-size: 12px !important;
 }
 
-/* Study list item polish */
 .studyItemBox .studyModality {
-  color: var(--text-primary-color) !important;
-  background: rgba(200, 200, 200, 0.06) !important;
+  color: var(--brand-gold) !important;
+  background: rgba(196, 155, 94, 0.08) !important;
   font-weight: 500 !important;
   letter-spacing: 0.03em !important;
 }
@@ -567,66 +1011,627 @@ select[class*="rows"] option {
   font-weight: 500 !important;
 }
 
-/* Hide "StudyList" heading */
-.studyListHeader,
-.StudyListHeader,
-div[class*="studyList" i] h2,
-div[class*="StudyList" i] h2,
-section[class*="studyList" i] h2,
-section[class*="StudyList" i] h2 {
+.studyItemBox .studyDescription,
+.studyItemBox [class*="Description"],
+.studyItemBox [class*="description"] {
   display: none !important;
 }
 
-/* Investigational use & studies options */
-.entry-header,
-.studyListFilter,
-.StudyListFilter {
-  background: transparent !important;
-}
-
-/* Hide top-right header options/settings icon */
-#options,
-#options-settings-icon,
-[data-cy="options-menu"],
-[id*="options-settings"],
-.option-dropdown {
-  display: none !important;
-}
-
-div:has(+ [id*="options"]) {
-  display: none !important;
-}
-
-/* Selected / active states */
-.active,
-.selected,
-[aria-selected="true"],
-[data-active="true"] {
-  color: var(--text-color-active) !important;
-}
-
-/* Patient MRN */
-.HeaderPatientInfo .mrn,
-.header-patient-info .mrn {
+/* Patient info */
+.HeaderPatientInfo,
+.header-patient-info {
+  font-size: 12px !important;
   color: var(--text-secondary-color) !important;
 }
 
-/* Date text */
-[class*="date"],
-[class*="Date"] {
-  color: var(--text-secondary-color) !important;
-}
-
-/* Series thumbnails */
-.thumbnailList .series-description,
-.ThumbnailList .series-description {
-  color: var(--text-primary-color) !important;
+.HeaderPatientInfo .patientName,
+.header-patient-info .patientName {
+  color: var(--brand-gold) !important;
   font-weight: 500 !important;
 }
 
-/* "No matching results" text readability */
-.study-list-container .notFound,
-.notFound {
+.HeaderPatientInfo .mrn,
+.header-patient-info .mrn {
+  color: var(--accent-teal) !important;
+}
+
+/* Measurement table */
+.measurement-table,
+.MeasurementTable {
+  border-spacing: 0 !important;
+}
+
+.table-head,
+.tableListHeader,
+.TableListHeader {
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--line-2) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.table-head .filters th {
+  vertical-align: top;
+}
+
+.tableList .tableListRow,
+.TableList .TableListRow {
+  border-bottom: 1px solid var(--line-1) !important;
+  transition: background 0.12s ease !important;
+}
+
+.tableList .tableListRow:hover,
+.TableList .TableListRow:hover {
+  background: rgba(107, 139, 158, 0.03) !important;
+}
+
+/* ======================== 8. Date pickers ======================== */
+.react-datepicker,
+.DatePicker,
+.datepicker,
+[class*="datepicker"],
+[class*="DatePicker"] {
+  background: var(--ui-gray) !important;
+  border: 1px solid var(--line-2) !important;
+  border-radius: 7px !important;
   color: var(--text-primary-color) !important;
-  font-weight: 400 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+.react-datepicker__header,
+.DatePicker__header,
+.datepicker__header,
+[class*="datepicker"] [class*="header"],
+[class*="DatePicker"] [class*="header"] {
+  background: var(--ui-gray-dark) !important;
+  border-bottom: 1px solid rgba(60, 75, 90, 0.15) !important;
+  color: var(--text-primary-color) !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name,
+.react-datepicker__day,
+[class*="datepicker"] [class*="month"],
+[class*="datepicker"] [class*="day"],
+[class*="DatePicker"] [class*="month"],
+[class*="DatePicker"] [class*="day"] {
+  color: var(--text-primary-color) !important;
+}
+
+.react-datepicker__day:hover,
+[class*="DatePicker"] [class*="day"]:hover {
+  background: rgba(107, 139, 158, 0.15) !important;
+  color: var(--text-color-active) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--in-range,
+.react-datepicker__day--in-selecting-range,
+[class*="DatePicker"] [class*="--selected"],
+[class*="DatePicker"] [class*="--in-range"] {
+  background: var(--accent-teal) !important;
+  color: #fff !important;
+}
+
+.react-datepicker__day--disabled,
+[class*="DatePicker"] [class*="--disabled"] {
+  color: var(--text-disabled-color) !important;
+}
+
+.react-datepicker__navigation-icon::before,
+[class*="DatePicker"] [class*="navigation"]::before {
+  border-color: var(--text-secondary-color) !important;
+}
+
+.react-datepicker__input-container input,
+.DatePicker__input input,
+[class*="datepicker"] input,
+[class*="DatePicker"] input {
+  background: var(--input-background-color) !important;
+  color: var(--text-primary-color) !important;
+  border: 1px solid var(--line-2) !important;
+  border-radius: 5px !important;
+}
+
+/* Native date/time inputs in dark mode */
+input[type="date"],
+input[type="month"],
+input[type="week"],
+input[type="datetime-local"] {
+  color-scheme: dark !important;
+}
+
+/* react-dates (study date range picker) */
+:root {
+  --datePicker-picker-background: var(--accent-teal);
+  --datePicker-picker-text: #ffffff;
+  --datePicker-picker-text-input: var(--text-primary-color);
+  --datePicker-picker-text-disabled: var(--text-disabled-color);
+  --datePicker-picker-disabled: var(--ui-gray-light);
+}
+
+.DateRangePicker {
+  height: auto !important;
+  width: 100% !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color-scheme: dark;
+}
+
+.DateRangePickerInput {
+  width: 100% !important;
+  height: 32px !important;
+  background-color: #131c27 !important;
+  border: 1px solid transparent !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+  color: var(--text-primary-color) !important;
+  overflow: hidden;
+}
+
+.DateRangePickerInput__withBorder {
+  border: 1px solid transparent !important;
+}
+
+.DateRangePicker .DateInput {
+  width: calc(50% - 10px) !important;
+  height: 30px !important;
+  background: transparent !important;
+  border-radius: 4px !important;
+}
+
+.DateRangePicker .DateInput > .DateInput_input {
+  height: 30px !important;
+  padding: 0 4px !important;
+  font-size: 11px !important;
+  line-height: 30px !important;
+  text-align: center;
+  color: var(--text-primary-color) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.DateRangePicker .DateInput_input::placeholder {
+  color: var(--input-placeholder-color) !important;
+}
+
+.DateRangePicker .DateInput_input__focused {
+  background: rgba(92, 138, 158, 0.08) !important;
+  border-bottom: 2px solid var(--accent-teal) !important;
+}
+
+.DateRangePickerInput_arrow {
+  width: 14px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--text-secondary-color) !important;
+}
+
+.DateRangePickerInput_arrow_svg {
+  height: 14px !important;
+  width: 14px !important;
+  fill: var(--text-secondary-color) !important;
+}
+
+.DateRangePickerInput_clearDates,
+.DateRangePickerInput_calendarIcon {
+  padding: 4px !important;
+  margin: 0 4px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.DateRangePickerInput_clearDates_svg,
+.DateRangePickerInput_calendarIcon_svg {
+  fill: var(--text-secondary-color) !important;
+}
+
+.DateRangePickerInput_clearDates:hover,
+.DateRangePickerInput_calendarIcon:hover {
+  background: rgba(107, 139, 158, 0.12) !important;
+  border-radius: 50%;
+}
+
+.DateRangePicker_picker {
+  z-index: 1000 !important;
+  background: var(--ui-gray) !important;
+  border: 1px solid rgba(60, 75, 90, 0.35) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55) !important;
+}
+
+.DateRangePicker .DayPicker,
+.DateRangePicker .DayPicker__horizontal,
+.DateRangePicker .DayPicker_transitionContainer,
+.DateRangePicker .CalendarMonthGrid,
+.DateRangePicker .CalendarMonth {
+  background: transparent !important;
+}
+
+.DateRangePicker .DayPicker__withBorder {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.DateRangePicker .CalendarMonth_caption {
+  color: var(--text-primary-color) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.DateRangePicker .DayPicker_weekHeader {
+  color: var(--text-secondary-color) !important;
+}
+
+.DateRangePicker .DayPicker_weekHeader_li {
+  font-size: 10px !important;
+  text-transform: uppercase;
+}
+
+.DateRangePicker .CalendarDay {
+  font-size: 12px !important;
+}
+
+.DateRangePicker .CalendarDay__default {
+  background: transparent !important;
+  border: 1px solid rgba(60, 75, 90, 0.16) !important;
+  color: var(--text-primary-color) !important;
+}
+
+.DateRangePicker .CalendarDay__default:hover {
+  background: rgba(107, 139, 158, 0.18) !important;
+  border-color: rgba(107, 139, 158, 0.45) !important;
+  color: #ffffff !important;
+}
+
+.DateRangePicker .CalendarDay__selected,
+.DateRangePicker .CalendarDay__selected:active,
+.DateRangePicker .CalendarDay__selected:hover {
+  background: var(--accent-teal) !important;
+  border-color: var(--accent-teal) !important;
+  color: #ffffff !important;
+}
+
+.DateRangePicker .CalendarDay__selected_span,
+.DateRangePicker .CalendarDay__hovered_span,
+.DateRangePicker .CalendarDay__hovered_span:hover {
+  background: rgba(92, 138, 158, 0.35) !important;
+  border-color: rgba(92, 138, 158, 0.5) !important;
+  color: var(--text-color-active) !important;
+}
+
+.DateRangePicker .CalendarDay__outside {
+  background: transparent !important;
+  border: 1px solid rgba(60, 75, 90, 0.10) !important;
+  color: var(--text-disabled-color) !important;
+}
+
+.DateRangePicker .CalendarDay__blocked_out_of_range,
+.DateRangePicker .CalendarDay__blocked_out_of_range:hover,
+.DateRangePicker .CalendarDay__blocked_calendar,
+.DateRangePicker .CalendarDay__blocked_minimum_nights {
+  background: transparent !important;
+  border-color: rgba(60, 75, 90, 0.10) !important;
+  color: var(--text-disabled-color) !important;
+  cursor: not-allowed;
+}
+
+.DateRangePicker .DayPickerNavigation_button__default {
+  background: rgba(18, 24, 32, 0.9) !important;
+  border: 1px solid rgba(60, 75, 90, 0.35) !important;
+  color: var(--text-secondary-color) !important;
+}
+
+.DateRangePicker .DayPickerNavigation_button__default:hover {
+  background: rgba(92, 138, 158, 0.15) !important;
+  border-color: var(--accent-teal) !important;
+}
+
+.DateRangePicker .DayPickerNavigation_svg__horizontal {
+  fill: var(--text-secondary-color) !important;
+}
+
+.DateRangePicker .DateRangePicker_select,
+.DateRangePicker .DateRangePicker_select:hover {
+  background-color: var(--ui-gray-dark) !important;
+  color: var(--text-primary-color) !important;
+  border: 1px solid rgba(60, 75, 90, 0.35) !important;
+  box-shadow: none !important;
+}
+
+.DateRangePicker .PresetDateRangePicker_panel {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  gap: 6px;
+  padding: 10px 12px 6px !important;
+  border-bottom: 1px solid rgba(60, 75, 90, 0.2);
+  margin-bottom: 2px;
+  box-shadow: none !important;
+}
+
+.DateRangePicker .PresetDateRangePicker_button {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  border: 1px solid rgba(196, 155, 94, 0.35) !important;
+  border-radius: 5px !important;
+  background: rgba(196, 155, 94, 0.06) !important;
+  box-shadow: none !important;
+  color: var(--brand-gold) !important;
+  font: inherit !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.DateRangePicker .PresetDateRangePicker_button:hover,
+.DateRangePicker .PresetDateRangePicker_button__selected {
+  background: var(--accent-teal) !important;
+  border-color: var(--accent-teal) !important;
+  color: #ffffff !important;
+}
+
+.DateRangePicker .DateInput_fangShape {
+  fill: var(--ui-gray) !important;
+}
+
+.DateRangePicker .DateInput_fangStroke {
+  stroke: rgba(60, 75, 90, 0.35) !important;
+}
+
+.DateRangePicker .DateRangePicker_closeButton {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--text-secondary-color) !important;
+}
+
+.DateRangePicker .DateRangePicker_closeButton_svg {
+  fill: var(--text-secondary-color) !important;
+}
+
+.DateRangePicker .DayPickerKeyboardShortcuts_panel {
+  background: var(--ui-gray-dark) !important;
+  border-color: rgba(60, 75, 90, 0.35) !important;
+  color: var(--text-primary-color) !important;
+}
+
+.DateRangePicker .DateInput,
+.DateRangePicker .DateInput_input,
+.DateRangePicker .DateInput_input:focus {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* ======================== 9. Narrow screens ======================== */
+
+/* ----- the app's card list (single column, used below ~990px) ----- */
+.study-list-container table:has(> thead > tr > th:only-child) > thead > tr > th {
+  padding: 0 !important;
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) > thead th > input {
+  height: 40px !important;
+  margin-bottom: 10px !important;
+  font-size: 16px !important; /* keeps iOS from zooming the page on focus */
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) > thead th > input::placeholder {
+  font-size: 12px !important;
+}
+
+/* the card is: name block | empty description spacer | modality + date */
+.study-list-container table:has(> thead > tr > th:only-child) tbody td > div {
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) tbody td > div > div:first-child {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) tbody td > div > div:first-child > div:first-child {
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.3 !important;
+  color: var(--ink-1) !important;
+  overflow-wrap: anywhere;
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) tbody td > div > div:first-child > div:last-child {
+  margin-top: 2px;
+  font-size: 10.5px !important;
+  letter-spacing: 0.05em;
+  color: #6b7d92 !important;
+}
+
+/* the description spacer would otherwise eat half of the card; keep it when a
+   study actually has a description */
+.study-list-container table:has(> thead > tr > th:only-child) tbody td .hide-xs:empty {
+  display: none !important;
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) tbody td > div > div:last-child {
+  flex: 0 0 auto;
+  width: auto !important;
+  max-width: none !important;
+  align-items: flex-end;
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) tbody td .modalities {
+  align-self: flex-end;
+}
+
+.study-list-container table:has(> thead > tr > th:only-child) tbody td > div > div:last-child > div:last-child {
+  white-space: nowrap;
+  font-size: 10px !important;
+  color: #7e8ea1 !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----- tablets ----- */
+@media (max-width: 991px) {
+  :root {
+    --nav-h: 76px;
+    --list-header-h: 56px;
+  }
+
+  .study-list-container .filters label {
+    padding: 12px 8px 7px !important;
+  }
+
+  .study-list-container tbody td:first-child {
+    font-size: 11.5px !important;
+  }
+
+  .pagination-area {
+    height: 52px !important;
+  }
+}
+
+/* ----- phones ----- */
+@media (max-width: 600px) {
+  :root {
+    --nav-h: 64px;
+    --list-header-h: 52px;
+    --shell-bottom: 34px;
+  }
+
+  .custom-brand-logo svg {
+    height: 22px !important;
+    width: auto !important;
+  }
+
+  .entry-header.header-big .header-menu a,
+  .entry-header.header-big .custom-local-link {
+    margin-left: 10px !important;
+    font-size: 9.5px !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .study-list-header .header {
+    font-size: 12px !important;
+    letter-spacing: 0.14em !important;
+  }
+
+  .study-list-header .addNewStudy label {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  body > footer,
+  .pacs-footer {
+    padding: 0 10px !important;
+    font-size: 8.5px !important;
+    line-height: 1.3 !important;
+    letter-spacing: 0.05em !important;
+    text-align: center;
+    white-space: normal !important;
+  }
+
+  .pagination-area {
+    height: 56px !important;
+    gap: 10px;
+  }
+
+  .pagination-area .btn.page-link,
+  .pagination-area .page-buttons button {
+    height: 36px !important;
+    padding: 0 12px !important;
+    line-height: 34px !important;
+  }
+
+  .pagination-area select {
+    height: 32px !important;
+  }
+
+  /* viewer: one-row header and a toolbar that can be swiped sideways */
+  .entry-header:not(.header-big) {
+    display: flex !important;
+    align-items: center;
+    height: var(--top-bar-height) !important;
+    padding: 4px var(--shell-pad) !important;
+  }
+
+  .entry-header:not(.header-big) .header-left-box {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .entry-header:not(.header-big) .header-menu {
+    display: flex !important;
+    align-items: center;
+    float: none !important;
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+  }
+
+  .entry-header:not(.header-big) .header-menu a,
+  .entry-header:not(.header-big) .header-btn {
+    margin-left: 10px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.08em !important;
+    white-space: nowrap;
+  }
+
+  /* the file-drop route ("Web Viewer") is desktop only; the compact header
+     keeps the way back to the study list instead */
+  .entry-header:not(.header-big) .header-menu .custom-local-link {
+    display: none !important;
+  }
+
+  /* viewport overlays collide once the viewport is this narrow */
+  .viewport-element .overlay-element {
+    font-size: 9px !important;
+  }
+
+  .viewport-element .overlay-element.top-right {
+    top: 46px;
+  }
+
+  .viewport-element .overlay-element.bottom-right {
+    bottom: 46px;
+  }
+
+  .ToolbarRow {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ToolbarRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toolbar-button {
+    flex: 0 0 auto;
+    padding: 0 7px;
+  }
+
+  .toolbar-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .toolbar-button .toolbar-button-label {
+    font-size: 9px !important;
+    letter-spacing: 0.02em;
+  }
 }

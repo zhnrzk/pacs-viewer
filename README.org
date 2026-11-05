@@ -1,7 +1,7 @@
 * PACS-viewer — Dockerized Medical Imaging Platform
 
 =PACS-viewer= bundles a web-based =DICOM viewer= (OHIF) with a lightweight
-=DICOM server= (Orthanc) into a single, deployable, hospital-branded stack.
+=DICOM server= (Orthanc) into a single, deployable, branded stack.
 
 Built on two great open-source projects:
 [[https://github.com/OHIF/Viewers][OHIF Viewer]] and
@@ -58,6 +58,7 @@ Open =http://localhost:3001=, fill in the configuration form, and click
 =start.sh= starts the services on the host.
 
 - Viewer: =http://server-ip:3000=
+- Web Viewer (local files, nothing uploaded): =http://server-ip:3000/local=
 - DICOM admin UI: =http://server-ip:3000/apps= (proxied via the viewer)
   or directly on the host: =http://server-ip:8041/apps=
 - Default login: =admin= / =admin.1234= (configurable in the wizard)
@@ -120,18 +121,49 @@ built-in =favicon.svg= is used.
 1. **Upload from the HTTP interface** =http://server-ip:8041=.
 2. **Send from an existing PACS / modality** — AE Title =PACS=, port =104=,
    IP =your-server-ip=.
-3. **Bulk import with the Python script**:
+3. **Bulk import with the Python script** (Python 3, no extra packages):
    #+begin_src bash
-   python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir
-   python tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir admin admin.1234
+   python3 tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir
+   python3 tools/ImportDicomFiles.py localhost 8041 /path/to/dicom/dir admin admin.1234
    #+end_src
+
+   The same script can import through the viewer proxy:
+   #+begin_src bash
+   python3 tools/ImportDicomFiles.py server-ip 3000 /path/to/dicom/dir admin admin.1234 --base-path /api
+   #+end_src
+
+   Use =--jobs N= to change the number of parallel uploads (default: 4).
+
+** Web Viewer (no upload)
+
+Open =/local= (or the *Web Viewer* link in the header) to drag and drop DICOM
+files or folders. Files stay in the browser and are not written to Orthanc;
+refreshing the page clears the loaded study. ZIP archives must be extracted
+first.
 
 ** Key Features
 
-- Custom dark theme and hospital branding (logo, favicon, footer).
+- Custom dark theme and branding (logo, favicon, footer).
+- Study-list polish: clearer filter placeholders, sticky filter row, and a
+  consistent scrollbar gutter.
+- Web Viewer for local files, with a header link that toggles between the study
+  list and the local viewer.
 - Automatic study enrichment: empty descriptions are filled from the
   institution name on ingest.
 - Automatic compression: incoming images are transcoded to JPEG 2000.
 - WebDAV upload (uploads allowed, deletes blocked).
 - No login prompts: the reverse proxy auto-authenticates to the DICOM server.
+- Hardened nginx: gzip, long-lived caching for hashed assets, no-cache for
+  mounted config files, and longer proxy timeouts for large transfers.
 - Persistent storage: data survives restarts.
+
+** Notes
+
+- The OHIF image is pinned to the build that matches the hashed assets in
+  =index.html=. Upgrading OHIF requires rebuilding the branding, not just
+  replacing the image tag.
+- Generated config files (=pacs-server.json=, =nginx_viewer.conf=, =viewer.js=,
+  =index.html=, =manifest.json=, =docker-compose.yml=) are written by the setup
+  wizard from =./templates=. The runtime copies are gitignored; the committed
+  defaults are kept in sync with the templates.
+- Data lives in =data/=, which is excluded from git. Back it up regularly.

@@ -123,9 +123,7 @@ echo "Configs generated. Starting services on host..."
 echo ""
 
 # Run docker compose on the host (paths resolve correctly here)
-${COMPOSE_CMD} up -d 2>&1
-
-if [ $? -eq 0 ]; then
+if ${COMPOSE_CMD} up -d 2>&1; then
   echo ""
   echo "========================================"
   echo "  All services started successfully!"
@@ -134,6 +132,9 @@ if [ $? -eq 0 ]; then
 else
   echo ""
   echo "[ERROR] Failed to start services"
+  rm -f .deploy-ready
+  ${COMPOSE_CMD} -f docker-compose.setup.yml down 2>/dev/null || true
+  exit 1
 fi
 
 # Cleanup

@@ -110,7 +110,7 @@ app.post('/api/deploy', (req, res) => {
       const logoFile = `custom-logo.${ext}`;
       fs.writeFileSync(path.join(PROJECT_ROOT, 'assets', logoFile), Buffer.from(base64Data, 'base64'));
       logoHref = `/${logoFile}`;
-      logoMount = `\n      - ./assets/${logoFile}:/usr/share/nginx/html/${logoFile}:ro`;
+      logoMount = `\n      - ./assets/${logoFile}:/usr/share/nginx/html/${logoFile}:ro,z`;
       console.log(`Custom logo saved: assets/${logoFile}`);
     } catch (err) {
       console.error('Failed to save custom logo:', err.message);

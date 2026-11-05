@@ -59,17 +59,48 @@
     href="/assets/apple-touch-startup-image-1536x2008.png">
   <link rel="icon" type="image/png" sizes="228x228" href="/assets/coast-228x228.png">
   <link rel="yandex-tableau-widget" href="/assets/yandex-browser-manifest.json">
+  <script>
+    (function () {
+      if (!('serviceWorker' in navigator)) {
+        return;
+      }
+      var key = 'pacs-sw-cleared-v1';
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        if (!registrations.length) {
+          return;
+        }
+        return Promise.all(registrations.map(function (registration) {
+          return registration.unregister();
+        })).then(function () {
+          if (!window.caches) {
+            return;
+          }
+          return caches.keys().then(function (keys) {
+            return Promise.all(keys.map(function (cacheKey) {
+              return caches.delete(cacheKey);
+            }));
+          });
+        }).then(function () {
+          if (!sessionStorage.getItem(key)) {
+            sessionStorage.setItem(key, '1');
+            window.location.reload();
+          }
+        });
+      }).catch(function () {});
+    })();
+  </script>
   <script type="text/javascript">
     window.PUBLIC_URL = '/';
   </script>
   <script type="text/javascript" src="/app-config.js"></script>
-  <script type="module" src="/init-service-worker.js"></script>
+  <script type="text/javascript" src="/custom.js?v=1"></script>
 
   <title>{{APP_NAME}}</title>
 
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-<link href="/10.81258732728ed501c1ae.css" rel="stylesheet"><link href="/app.81258732728ed501c1ae.css" rel="stylesheet"><link rel="stylesheet" href="/custom.css"></head>
+<link href="/10.81258732728ed501c1ae.css" rel="stylesheet"><link href="/app.81258732728ed501c1ae.css" rel="stylesheet"><link rel="stylesheet" href="/custom.css?v=1"></head>
 
 <body>
   <noscript> You need to enable JavaScript to run this app. </noscript>
@@ -153,17 +184,6 @@
           if (wrapper) wrapper.style.display = 'none';
         });
       }
-      function forceDarkMode() {
-        document.querySelectorAll('*').forEach(function(el) {
-          var bg = window.getComputedStyle(el).backgroundColor;
-          if (bg === 'rgb(255, 255, 255)' || bg === 'rgb(248, 248, 248)' || bg === 'rgb(240, 240, 240)' || bg === 'rgb(245, 245, 245)') {
-            el.style.setProperty('background', 'var(--ui-gray, #141414)', 'important');
-            el.style.setProperty('background-color', 'var(--ui-gray, #141414)', 'important');
-            el.style.setProperty('color', 'var(--text-primary-color, #c8c8c8)', 'important');
-          }
-        });
-      }
-      setInterval(forceDarkMode, 500);
       new MutationObserver(function() { replaceLogo(); hideInvestigational(); hideOptions(); hideStudyListHeading(); })
         .observe(document.body || document.documentElement, { childList: true, subtree: true });
       replaceLogo();

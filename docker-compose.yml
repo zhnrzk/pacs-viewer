@@ -7,27 +7,31 @@ services:
       - 104:104
       - 8041:8041
     volumes:
-      - ./pacs-server.json:/etc/orthanc/orthanc.json:ro
-      - ./lua:/etc/orthanc/lua:ro
-      - ./data:/var/lib/orthanc/db/
+      - ./pacs-server.json:/etc/orthanc/orthanc.json:ro,z
+      - ./lua:/etc/orthanc/lua:ro,z
+      - ./data:/var/lib/orthanc/db/:z
     restart: always
     networks:
       - pacs
 
   pacs-viewer:
     container_name: pacs-viewer
-    image: ohif/viewer
+    # Pinned to the build that matches the hashed assets in index.html.
+    image: ohif/viewer@sha256:b4bfecdc7cc670101cbfd01215fcd1f77b7cc5c867c5ed1cb10142f7a806ccd9
     ports:
       - 3000:80
     environment:
       - APP_CONFIG=/usr/share/nginx/html/app-config.js
     volumes:
-      - ./nginx_viewer.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./viewer.js:/usr/share/nginx/html/app-config.js:ro
-      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro
-      - ./assets/custom.css:/usr/share/nginx/html/custom.css:ro
-      - ./index.html:/usr/share/nginx/html/index.html:ro
-      - ./assets/favicon.svg:/usr/share/nginx/html/favicon.svg:ro
+      - ./nginx_viewer.conf:/etc/nginx/conf.d/default.conf:ro,z
+      - ./viewer.js:/usr/share/nginx/html/app-config.js:ro,z
+      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro,z
+      - ./assets/custom.css:/usr/share/nginx/html/custom.css:ro,z
+      - ./assets/custom.js:/usr/share/nginx/html/custom.js:ro,z
+      - ./index.html:/usr/share/nginx/html/index.html:ro,z
+      - ./assets/favicon.svg:/usr/share/nginx/html/favicon.svg:ro,z
+      - ./assets/android-chrome-192x192.png:/usr/share/nginx/html/assets/android-chrome-192x192.png:ro,z
+      - ./assets/android-chrome-512x512.png:/usr/share/nginx/html/assets/android-chrome-512x512.png:ro,z
     restart: always
     networks:
       - pacs
